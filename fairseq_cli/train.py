@@ -302,18 +302,19 @@ def validate_and_save(
             cfg.checkpoint, trainer, epoch_itr, valid_losses[0]
         )
         if valid_losses[1]:
-            updates = trainer.get_num_updates()
-            short_updates = int(updates / 1000)
-            avg_ckpt_path = os.path.join(cfg.checkpoint.save_dir, f"checkpoint.best_avg.{short_updates}k-10.pt")
-            logger.info(f" === Average checkpoint to {avg_ckpt_path}...")
-            # try:
-            #     os.system(
-            #         f"python3 scripts/average_checkpoints.py "
-            #         f"--inputs {cfg.checkpoint.save_dir} "
-            #         f"--num-update-checkpoints 10 --checkpoint-upper-bound {updates} "
-            #         f"--output {avg_ckpt_path}")
-            # except:
-            #     logger.info("To few checkpoints, train more!")
+            if cfg.distributed_training.distributed_world_size == 1 or (cfg.distributed_training.distributed_world_size > 1 and cfg.distributed_training.distributed_rank == 0):
+                updates = trainer.get_num_updates()
+                short_updates = int(updates / 1000)
+                avg_ckpt_path = os.path.join(cfg.checkpoint.save_dir, f"checkpoint.best_avg.{short_updates}k-10.pt")
+                logger.info(f" === Average checkpoint to {avg_ckpt_path}...")
+                try:
+                    os.system(
+                        f"python3 ConST/scripts/average_checkpoints.py "
+                        f"--inputs {cfg.checkpoint.save_dir} "
+                        f"--num-update-checkpoints 10 --checkpoint-upper-bound {updates} "
+                        f"--output {avg_ckpt_path}")
+                except:
+                    logger.info("To few checkpoints, train more!")
 
     return valid_losses[:1], should_stop
 
@@ -372,6 +373,7 @@ def validate(
         stats, is_best = get_valid_stats(cfg, trainer, agg.get_smoothed_values())
         progress.print(stats, tag=subset, step=trainer.get_num_updates())
 
+        print(stats)
         valid_losses.append(stats[cfg.checkpoint.best_checkpoint_metric])
         valid_losses.append(is_best)
     return valid_losses

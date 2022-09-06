@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree.
 """isort:skip_file"""
 
-from .dictionary import Dictionary, TruncatedDictionary
+from .dictionary import Dictionary, PhonemeDictionary, TruncatedDictionary
 
 from .fairseq_dataset import FairseqDataset, FairseqIterableDataset
 
@@ -103,6 +103,7 @@ __all__ = [
     "PadDataset",
     "PrependDataset",
     "PrependTokenDataset",
+    "PhonemeDictionary",
     "ReplaceDataset",
     "RollDataset",
     "FileAudioDataset",

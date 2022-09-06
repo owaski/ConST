@@ -1,0 +1,616 @@
+2022-08-26 18:52:27 | INFO | fairseq_cli.generate | {'_name': None, 'common': {'_name': None, 'no_progress_bar': False, 'log_interval': 100, 'log_format': None, 'tensorboard_logdir': None, 'wandb_project': None, 'seed': 1, 'cpu': False, 'tpu': False, 'bf16': False, 'memory_efficient_bf16': False, 'fp16': False, 'memory_efficient_fp16': False, 'fp16_no_flatten_grads': False, 'fp16_init_scale': 128, 'fp16_scale_window': None, 'fp16_scale_tolerance': 0.0, 'min_loss_scale': 0.0001, 'threshold_loss_scale': None, 'user_dir': None, 'empty_cache_freq': 0, 'all_gather_list_size': 16384, 'model_parallel_size': 1, 'quantization_config_path': None, 'profile': False}, 'common_eval': {'_name': None, 'path': '/mnt/data/siqiouyang/runs/ConST/ablation_pretrain_ctc_phoneme_100h_ft_10h/checkpoint_best.pt', 'post_process': None, 'quiet': False, 'model_overrides': '{}', 'results_path': '/home/siqiouyang/work/projects/ConST/ConST/analysis/generation/ablation_pretrain_ctc_phoneme_100h_ft_10h'}, 'distributed_training': {'_name': None, 'distributed_world_size': 1, 'distributed_rank': 0, 'distributed_backend': 'nccl', 'distributed_init_method': None, 'distributed_port': -1, 'device_id': 0, 'local_rank': 0, 'distributed_no_spawn': False, 'ddp_backend': 'c10d', 'bucket_cap_mb': 25, 'fix_batches_to_gpus': False, 'find_unused_parameters': False, 'fast_stat_sync': False, 'broadcast_buffers': False, 'distributed_wrapper': 'DDP', 'slowmo_momentum': None, 'slowmo_algorithm': 'LocalSGD', 'localsgd_frequency': 3, 'nprocs_per_node': 8, 'pipeline_model_parallel': False, 'pipeline_balance': None, 'pipeline_devices': None, 'pipeline_chunks': 0, 'pipeline_encoder_balance': None, 'pipeline_encoder_devices': None, 'pipeline_decoder_balance': None, 'pipeline_decoder_devices': None, 'pipeline_checkpoint': 'never', 'zero_sharding': 'none', 'tpu': False}, 'dataset': {'_name': None, 'num_workers': 1, 'skip_invalid_size_inputs_valid_test': False, 'max_tokens': 4000000, 'batch_size': None, 'required_batch_size_multiple': 8, 'required_seq_len_multiple': 1, 'dataset_impl': None, 'data_buffer_size': 10, 'train_subset': 'train', 'valid_subset': 'valid', 'validate_interval': 1, 'validate_interval_updates': 0, 'validate_after_updates': 0, 'fixed_validation_seed': None, 'disable_validation': False, 'max_tokens_valid': 4000000, 'batch_size_valid': None, 'curriculum': 0, 'gen_subset': 'dev_st_de', 'num_shards': 1, 'shard_id': 0}, 'optimization': {'_name': None, 'max_epoch': 0, 'max_update': 0, 'stop_time_hours': 0.0, 'clip_norm': 0.0, 'sentence_avg': False, 'update_freq': [1], 'lr': [0.25], 'min_lr': -1.0, 'use_bmuf': False}, 'checkpoint': {'_name': None, 'save_dir': 'checkpoints', 'restore_file': 'checkpoint_last.pt', 'finetune_from_model': None, 'reset_dataloader': False, 'reset_lr_scheduler': False, 'reset_meters': False, 'reset_optimizer': False, 'optimizer_overrides': '{}', 'save_interval': 1, 'save_interval_updates': 0, 'keep_interval_updates': -1, 'keep_last_epochs': -1, 'keep_best_checkpoints': -1, 'no_save': False, 'no_epoch_checkpoints': False, 'no_last_checkpoints': False, 'no_save_optimizer_state': False, 'best_checkpoint_metric': 'loss', 'maximize_best_checkpoint_metric': False, 'patience': -1, 'checkpoint_suffix': '', 'checkpoint_shard_count': 1, 'model_parallel_size': 1, 'distributed_rank': 0}, 'bmuf': {'_name': None, 'block_lr': 1.0, 'block_momentum': 0.875, 'global_sync_iter': 50, 'warmup_iterations': 500, 'use_nbm': False, 'average_sync': False, 'distributed_world_size': 1}, 'generation': {'_name': None, 'beam': 10, 'nbest': 1, 'max_len_a': 0.0, 'max_len_b': 200, 'min_len': 1, 'match_source_len': False, 'unnormalized': False, 'no_early_stop': False, 'no_beamable_mm': False, 'lenpen': 0.6, 'unkpen': 0.0, 'replace_unk': None, 'sacrebleu': False, 'score_reference': False, 'prefix_size': 1, 'no_repeat_ngram_size': 0, 'sampling': False, 'sampling_topk': -1, 'sampling_topp': -1.0, 'constraints': None, 'temperature': 1.0, 'diverse_beam_groups': -1, 'diverse_beam_strength': 0.5, 'diversity_rate': -1.0, 'print_alignment': False, 'print_step': False, 'lm_path': None, 'lm_weight': 0.0, 'iter_decode_eos_penalty': 0.0, 'iter_decode_max_iter': 10, 'iter_decode_force_max_iter': False, 'iter_decode_with_beam': 1, 'iter_decode_with_external_reranker': False, 'retain_iter_history': False, 'retain_dropout': False, 'retain_dropout_modules': None, 'decoding_format': None, 'no_seed_provided': False}, 'eval_lm': {'_name': None, 'output_word_probs': False, 'output_word_stats': False, 'context_window': 0, 'softmax_batch': 9223372036854775807}, 'interactive': {'_name': None, 'buffer_size': 0, 'input': '-'}, 'model': None, 'task': Namespace(_name='speech_to_text', all_gather_list_size=16384, batch_size=None, batch_size_valid=None, beam=10, best_checkpoint_metric='loss', bf16=False, bpe=None, broadcast_buffers=False, bucket_cap_mb=25, checkpoint_shard_count=1, checkpoint_suffix='', config_yaml='config_st_de.yaml', constraints=None, cpu=False, criterion='cross_entropy', curriculum=0, data='/mnt/data/siqiouyang/datasets/must-c-v1.0/', data_buffer_size=10, dataset_impl=None, ddp_backend='c10d', decoding_format=None, device_id=0, disable_validation=False, distributed_backend='nccl', distributed_init_method=None, distributed_no_spawn=False, distributed_port=-1, distributed_rank=0, distributed_world_size=1, distributed_wrapper='DDP', diverse_beam_groups=-1, diverse_beam_strength=0.5, diversity_rate=-1.0, empty_cache_freq=0, fast_stat_sync=False, find_unused_parameters=False, finetune_from_model=None, fix_batches_to_gpus=False, fixed_validation_seed=None, force_anneal=None, fp16=False, fp16_init_scale=128, fp16_no_flatten_grads=False, fp16_scale_tolerance=0.0, fp16_scale_window=None, gen_subset='dev_st_de', iter_decode_eos_penalty=0.0, iter_decode_force_max_iter=False, iter_decode_max_iter=10, iter_decode_with_beam=1, iter_decode_with_external_reranker=False, keep_best_checkpoints=-1, keep_interval_updates=-1, keep_last_epochs=-1, lenpen=0.6, lm_path=None, lm_weight=0.0, local_rank=0, localsgd_frequency=3, log_format=None, log_interval=100, lr_scheduler='fixed', lr_shrink=0.1, match_source_len=False, max_len_a=0, max_len_b=200, max_source_positions=4000000, max_target_positions=1024, max_tokens=4000000, max_tokens_valid=4000000, maximize_best_checkpoint_metric=False, memory_efficient_bf16=False, memory_efficient_fp16=False, min_len=1, min_loss_scale=0.0001, model_overrides='{}', model_parallel_size=1, mt_mode=False, nbest=1, no_beamable_mm=False, no_early_stop=False, no_epoch_checkpoints=False, no_last_checkpoints=False, no_progress_bar=False, no_repeat_ngram_size=0, no_save=False, no_save_optimizer_state=False, no_seed_provided=False, nprocs_per_node=8, num_shards=1, num_workers=1, optimizer=None, optimizer_overrides='{}', path='/mnt/data/siqiouyang/runs/ConST/ablation_pretrain_ctc_phoneme_100h_ft_10h/checkpoint_best.pt', patience=-1, pipeline_balance=None, pipeline_checkpoint='never', pipeline_chunks=0, pipeline_decoder_balance=None, pipeline_decoder_devices=None, pipeline_devices=None, pipeline_encoder_balance=None, pipeline_encoder_devices=None, pipeline_model_parallel=False, post_process=None, prefix_size=1, print_alignment=False, print_step=False, profile=False, quantization_config_path=None, quiet=False, replace_unk=None, required_batch_size_multiple=8, required_seq_len_multiple=1, reset_dataloader=False, reset_lr_scheduler=False, reset_meters=False, reset_optimizer=False, restore_file='checkpoint_last.pt', results_path='/home/siqiouyang/work/projects/ConST/ConST/analysis/generation/ablation_pretrain_ctc_phoneme_100h_ft_10h', retain_dropout=False, retain_dropout_modules=None, retain_iter_history=False, sacrebleu=False, sacrebleu_char_level=False, sacrebleu_lowercase=False, sacrebleu_tokenizer='13a', sampling=False, sampling_topk=-1, sampling_topp=-1.0, save_dir='checkpoints', save_interval=1, save_interval_updates=0, score_reference=False, scoring='sacrebleu', seed=1, shard_id=0, skip_invalid_size_inputs_valid_test=False, slowmo_algorithm='LocalSGD', slowmo_momentum=None, task='speech_to_text', temperature=1.0, tensorboard_logdir=None, threshold_loss_scale=None, tokenizer=None, tpu=False, train_subset='train', unkpen=0, unnormalized=False, user_dir=None, valid_subset='valid', validate_after_updates=0, validate_interval=1, validate_interval_updates=0, wandb_project=None, warmup_updates=0, zero_sharding='none'), 'criterion': {'_name': 'cross_entropy', 'sentence_avg': False}, 'optimizer': None, 'lr_scheduler': Namespace(_name='fixed', all_gather_list_size=16384, batch_size=None, batch_size_valid=None, beam=10, best_checkpoint_metric='loss', bf16=False, bpe=None, broadcast_buffers=False, bucket_cap_mb=25, checkpoint_shard_count=1, checkpoint_suffix='', config_yaml='config_st_de.yaml', constraints=None, cpu=False, criterion='cross_entropy', curriculum=0, data='/mnt/data/siqiouyang/datasets/must-c-v1.0/', data_buffer_size=10, dataset_impl=None, ddp_backend='c10d', decoding_format=None, device_id=0, disable_validation=False, distributed_backend='nccl', distributed_init_method=None, distributed_no_spawn=False, distributed_port=-1, distributed_rank=0, distributed_world_size=1, distributed_wrapper='DDP', diverse_beam_groups=-1, diverse_beam_strength=0.5, diversity_rate=-1.0, empty_cache_freq=0, fast_stat_sync=False, find_unused_parameters=False, finetune_from_model=None, fix_batches_to_gpus=False, fixed_validation_seed=None, force_anneal=None, fp16=False, fp16_init_scale=128, fp16_no_flatten_grads=False, fp16_scale_tolerance=0.0, fp16_scale_window=None, gen_subset='dev_st_de', iter_decode_eos_penalty=0.0, iter_decode_force_max_iter=False, iter_decode_max_iter=10, iter_decode_with_beam=1, iter_decode_with_external_reranker=False, keep_best_checkpoints=-1, keep_interval_updates=-1, keep_last_epochs=-1, lenpen=0.6, lm_path=None, lm_weight=0.0, local_rank=0, localsgd_frequency=3, log_format=None, log_interval=100, lr_scheduler='fixed', lr_shrink=0.1, match_source_len=False, max_len_a=0, max_len_b=200, max_source_positions=4000000, max_target_positions=1024, max_tokens=4000000, max_tokens_valid=4000000, maximize_best_checkpoint_metric=False, memory_efficient_bf16=False, memory_efficient_fp16=False, min_len=1, min_loss_scale=0.0001, model_overrides='{}', model_parallel_size=1, mt_mode=False, nbest=1, no_beamable_mm=False, no_early_stop=False, no_epoch_checkpoints=False, no_last_checkpoints=False, no_progress_bar=False, no_repeat_ngram_size=0, no_save=False, no_save_optimizer_state=False, no_seed_provided=False, nprocs_per_node=8, num_shards=1, num_workers=1, optimizer=None, optimizer_overrides='{}', path='/mnt/data/siqiouyang/runs/ConST/ablation_pretrain_ctc_phoneme_100h_ft_10h/checkpoint_best.pt', patience=-1, pipeline_balance=None, pipeline_checkpoint='never', pipeline_chunks=0, pipeline_decoder_balance=None, pipeline_decoder_devices=None, pipeline_devices=None, pipeline_encoder_balance=None, pipeline_encoder_devices=None, pipeline_model_parallel=False, post_process=None, prefix_size=1, print_alignment=False, print_step=False, profile=False, quantization_config_path=None, quiet=False, replace_unk=None, required_batch_size_multiple=8, required_seq_len_multiple=1, reset_dataloader=False, reset_lr_scheduler=False, reset_meters=False, reset_optimizer=False, restore_file='checkpoint_last.pt', results_path='/home/siqiouyang/work/projects/ConST/ConST/analysis/generation/ablation_pretrain_ctc_phoneme_100h_ft_10h', retain_dropout=False, retain_dropout_modules=None, retain_iter_history=False, sacrebleu=False, sacrebleu_char_level=False, sacrebleu_lowercase=False, sacrebleu_tokenizer='13a', sampling=False, sampling_topk=-1, sampling_topp=-1.0, save_dir='checkpoints', save_interval=1, save_interval_updates=0, score_reference=False, scoring='sacrebleu', seed=1, shard_id=0, skip_invalid_size_inputs_valid_test=False, slowmo_algorithm='LocalSGD', slowmo_momentum=None, task='speech_to_text', temperature=1.0, tensorboard_logdir=None, threshold_loss_scale=None, tokenizer=None, tpu=False, train_subset='train', unkpen=0, unnormalized=False, user_dir=None, valid_subset='valid', validate_after_updates=0, validate_interval=1, validate_interval_updates=0, wandb_project=None, warmup_updates=0, zero_sharding='none'), 'scoring': {'_name': 'sacrebleu', 'sacrebleu_tokenizer': '13a', 'sacrebleu_lowercase': False, 'sacrebleu_char_level': False}, 'bpe': None, 'tokenizer': None}
+2022-08-26 18:52:27 | INFO | fairseq.tasks.speech_to_text | dictionary size (spm_unigram10000_st_de.txt): 10,000
+2022-08-26 18:52:27 | INFO | fairseq_cli.generate | loading model(s) from /mnt/data/siqiouyang/runs/ConST/ablation_pretrain_ctc_phoneme_100h_ft_10h/checkpoint_best.pt
+2022-08-26 18:52:31 | INFO | fairseq.tasks.speech_to_text | pre-tokenizer: {'tokenizer': None}
+2022-08-26 18:52:31 | INFO | fairseq.tasks.speech_to_text | tokenizer: {'bpe': 'sentencepiece', 'sentencepiece_model': '/mnt/data/siqiouyang/datasets/must-c-v1.0/spm_unigram10000_st_de.model'}
+2022-08-26 18:52:31 | INFO | fairseq.data.audio.speech_to_text_dataset | SpeechToTextDataset(split="dev_st_de", n_samples=1418, prepend_tgt_lang_tag=True, shuffle=False, transforms=None)
+2022-08-26 18:52:34 | INFO | fairseq.tasks.speech_to_text | pre-tokenizer: {'tokenizer': None}
+2022-08-26 18:52:34 | INFO | fairseq.tasks.speech_to_text | tokenizer: {'bpe': 'sentencepiece', 'sentencepiece_model': '/mnt/data/siqiouyang/datasets/must-c-v1.0/spm_unigram10000_st_de.model'}
+T-373	Vielen Dank für die Erfindung der Verhaltensökonomie.
+H-373	-7.1418609619140625	▁Vielen ▁Dank . ▁( Applaus )
+D-373	-7.1418609619140625	Vielen Dank. (Applaus)
+P-373	-20.3328 -2.0167 -0.0364 -0.2407 -1.8504 -0.1805 -0.0837 -0.1282
+T-733	"Nun, das sind ungefähr 30 Prozent", sagte er.
+H-733	-6.172230243682861	▁Schauen ▁Sie ▁sich ▁etwa ▁30 ▁Prozent ▁an , ▁die ▁er ▁sagte .
+D-733	-6.172230243682861	Schauen Sie sich etwa 30 Prozent an, die er sagte.
+P-733	-20.2813 -3.1072 -0.6069 -0.2249 -0.9541 -0.0880 -0.7657 -0.8940 -0.1909 -1.1856 -0.9266 -0.4386 -0.2431 -0.1619
+T-855	Und das Ziel dabei ist ganz einfach.
+H-855	-6.927483081817627	▁Und ▁das ▁Thema ▁ist ▁ziemlich ▁einfach .
+D-855	-6.927483081817627	Und das Thema ist ziemlich einfach.
+P-855	-20.3230 -1.5656 -0.1458 -2.8138 -0.0928 -0.4358 -0.2572 -0.1323 -0.1230
+T-1045	Damit haben wir insgesamt 1,5 Milliarden Spieler.
+H-1045	-6.978387832641602	▁Es ▁ist ▁die ▁neue ste ▁Technologie , ▁die ▁wir ▁kreiert en .
+D-1045	-6.978387832641602	Es ist die neueste Technologie, die wir kreierten.
+P-1045	-20.3048 -2.1778 -0.3551 -3.1244 -1.0622 -1.3530 -1.8839 -0.3560 -0.0934 -1.4317 -1.3622 -0.1452 -0.1707 -0.1761
+T-1411	Es war ein riesiger Erfolg.
+H-1411	-6.7729926109313965	▁Es ▁war ▁ein ▁he ik ler ▁Erfolg .
+D-1411	-6.7729926109313965	Es war ein heikler Erfolg.
+P-1411	-20.2978 -0.8416 -0.1121 -0.0336 -3.7961 -0.6211 -0.0476 -0.9323 -0.1637 -0.1180
+T-480	Die Korrelation ist also gering.
+H-480	-5.783144474029541	▁Die ▁Kor re l ation ▁ist ▁also ▁wenig .
+D-480	-5.783144474029541	Die Korrelation ist also wenig.
+P-480	-20.3556 -0.3221 -0.9527 -0.1551 -0.4075 -0.0436 -0.0858 -0.0910 -1.7821 -0.0527 -0.1299
+T-1334	Ich meine, fragen wir uns: Warum bekämpfen wir das?
+H-1334	-6.169234275817871	▁Fragen ▁wir ▁uns ▁doch ▁selbst : ▁Wieso ▁sind ▁wir ▁lustig ?
+D-1334	-6.169234275817871	Fragen wir uns doch selbst: Wieso sind wir lustig?
+P-1334	-20.2964 -1.6086 -0.0393 -0.4548 -1.1955 -0.5802 -1.2967 -1.1330 -0.6930 -0.2854 -1.0080 -0.0436 -0.1128
+T-1316	Wir wollen nicht, dass Firmen Samen besitzen.
+H-1316	-6.204038619995117	▁Wir ▁wollen ▁nicht , ▁dass ▁Unternehmen ▁ ö ko nom ische ▁Vorteil e ▁haben .
+D-1316	-6.204038619995117	Wir wollen nicht, dass Unternehmen ökonomische Vorteile haben.
+P-1316	-20.3444 -0.2077 -0.8213 -0.0962 -0.0988 -0.0501 -0.8530 -2.9234 -2.5241 -2.3966 -0.0344 -0.8188 -1.6366 -0.0618 -0.8415 -0.1114 -0.1380
+T-379	Er hatte die Erfahrung gehabt.
+H-379	-7.568848133087158	▁Ha st ▁du ▁eine ▁Erfahrung ?
+D-379	-7.568848133087158	Hast du eine Erfahrung?
+P-379	-20.3271 -2.5679 -0.9159 -0.8347 -1.2829 -0.2409 -0.0382 -0.1487
+T-828	Ich erwähnte das gegenüber Miguel und er nickte.
+H-828	-6.470926284790039	▁Ich ▁erwähnt e , ▁dass ▁mir ▁das ▁nicht ▁bewusst ▁ist .
+D-828	-6.470926284790039	Ich erwähnte, dass mir das nicht bewusst ist.
+P-828	-20.3340 -0.3322 -0.4079 -0.0774 -3.8589 -0.2082 -1.8366 -0.7090 -0.0982 -1.6394 -0.4228 -0.0775 -0.1509
+T-721	"Nachhaltige Proteine", sagte er.
+H-721	-7.051270484924316	▁Er ▁sagte : ▁" S el bt s verständlich ▁werde ▁ich ▁die ▁Pro be ▁nehmen ."
+D-721	-7.051270484924316	Er sagte: "Selbtsverständlich werde ich die Probe nehmen."
+P-721	-20.2910 -2.4473 -0.2989 -2.0183 -0.0567 -3.1748 -2.3296 -0.1379 -0.1177 -0.0455 -1.9905 -0.0498 -2.5069 -1.3602 -1.4419 -0.1365 -1.3873 -0.1512
+T-1113	Also, das können wir auch.
+H-1113	-7.616389751434326	▁Tatsächlich ▁bewahren ▁wir ▁die ▁komplett e ▁Zivilisation .
+D-1113	-7.616389751434326	Tatsächlich bewahren wir die komplette Zivilisation.
+P-1113	-20.3427 -3.0116 -1.0035 -1.8075 -0.2666 -1.1611 -0.1058 -2.3911 -0.0796 -0.1520
+T-317	Vielleicht können wir Widrigkeiten als Veränderung sehen.
+H-317	-6.404979228973389	▁Vielleicht ▁können ▁wir ▁ihn ▁als ▁Änderung ▁ansehen .
+D-317	-6.404979228973389	Vielleicht können wir ihn als Änderung ansehen.
+P-317	-20.3494 -0.0441 -0.0851 -0.1007 -1.7947 -0.0342 -0.9529 -1.8005 -0.2104 -0.1266
+T-1107	Das klingt verrückt, oder?
+H-1107	-7.721404075622559	▁woanders ▁hin ten , ▁wo ▁sie ▁eben ▁stehen .
+D-1107	-7.721404075622559	woanders hinten, wo sie eben stehen.
+P-1107	-20.2955 -5.5538 -1.2360 -0.5198 -1.3156 -0.1914 -0.0747 -1.2940 -0.9781 -0.9685 -0.1213
+T-901	Das ist kein Spezialeffekt aus Hollywood.
+H-901	-5.344681739807129	▁Das ▁ist ▁kein ▁He li k op ter - S p ekt rum .
+D-901	-5.344681739807129	Das ist kein Helikopter-Spektrum.
+P-901	-20.3233 -0.3515 -0.4484 -0.2713 -1.5919 -1.7325 -0.0249 -0.0101 -0.0714 -0.5076 -1.6436 -0.9100 -0.0584 -0.0747 -0.0748 -0.1150
+T-1236	Dieser Typ war ein Held, Jonas Salk.
+H-1236	-5.225505828857422	▁Dies er ▁Mann ▁war ▁ein ▁He l d , ▁Jo han n es .
+D-1236	-5.225505828857422	Dieser Mann war ein Held, Johannes.
+P-1236	-20.2960 -0.3917 -0.1547 -0.0889 -0.1695 -0.1201 -0.3124 -2.7998 -0.1406 -0.1381 -1.2412 -1.2185 -0.1330 -0.0673 -0.1752 -0.1334
+T-1114	Wir spielen seit 1994 Warcraft.
+H-1114	-7.0092692375183105	▁So ▁können ▁wir ▁es ▁tun .
+D-1114	-7.0092692375183105	So können wir es tun.
+P-1114	-20.3514 -0.6770 -0.7737 -0.1123 -0.9240 -1.2940 -0.1567 -0.1187
+T-788	Wie ist die Futterverwertung? "
+H-788	-6.549611568450928	▁Was ▁ist ▁der ▁CO 2 - Ver b rauch ▁des ▁Gewebe s ?
+D-788	-6.549611568450928	Was ist der CO2-Verbrauch des Gewebes?
+P-788	-20.3052 -1.9159 -0.3396 -1.2248 -3.4042 -0.0226 -0.1447 -0.1498 -0.0582 -0.0334 -1.0140 -4.3574 -0.1230 -0.0130 -0.1502
+T-918	Lassen Sie es mich Ihnen aus der Nähe zeigen.
+H-918	-6.135293960571289	▁Ich ▁möchte ▁Ihnen ▁einen ▁guten ▁Über blick ▁darüber ▁geben .
+D-918	-6.135293960571289	Ich möchte Ihnen einen guten Überblick darüber geben.
+P-918	-20.3334 -0.2060 -2.9103 -0.2964 -0.5977 -0.5084 -0.8779 -0.0310 -1.2228 -0.0473 -0.1057 -0.1119
+T-1018	Ich bekomme im wahren Leben dieses Feedback nicht.
+H-1018	-6.123056411743164	▁Ich ▁be halt e ▁dieses ▁Se g ment ▁nicht ▁in ▁dem ▁wirklich en ▁Leben .
+D-1018	-6.123056411743164	Ich behalte dieses Segment nicht in dem wirklichen Leben.
+P-1018	-20.3282 -0.6434 -1.2675 -0.8164 -0.0518 -3.3426 -1.8621 -1.4882 -0.0335 -0.5838 -0.7029 -1.1000 -0.8071 -0.0959 -0.0987 -0.1567 -0.1363
+T-1204	Wir reden zwiespältig davon.
+H-1204	-6.764570236206055	▁Wir ▁sprechen ▁un auf halt sam ▁darüber .
+D-1204	-6.764570236206055	Wir sprechen unaufhaltsam darüber.
+P-1204	-20.3533 -0.4171 -0.7393 -3.4916 -0.7636 -0.1587 -0.0055 -0.7905 -0.0845 -0.1260
+T-630	Wir kehrten zum Wrack der Titanic zurück.
+H-630	-6.048274993896484	▁Wir ▁sind ▁zurück ▁durch ▁den ▁Technologie - R hy th m us ▁ge land et .
+D-630	-6.048274993896484	Wir sind zurück durch den Technologie-Rhythmus gelandet.
+P-630	-20.3143 -0.4953 -2.4972 -0.2315 -0.6942 -0.4364 -2.6129 -1.0643 -0.2530 -1.2807 -0.0245 -0.0623 -0.0238 -1.5988 -2.3281 -0.0891 -0.1407 -0.1135
+T-1020	Sie sind einfach besser als die Realität.
+H-1020	-6.885000705718994	▁Das ▁ist ▁einfach ▁besser ▁als ▁die ▁Realität .
+D-1020	-6.885000705718994	Das ist einfach besser als die Realität.
+P-1020	-20.3298 -2.0318 -0.0545 -3.2139 -0.5627 -0.6050 -0.1428 -0.2417 -0.1066 -0.1211
+T-860	Ta-da! (Applaus)
+H-860	-6.6119608879089355	▁CA : ▁Hu ber t us , ▁vielen ▁Dank .
+D-860	-6.6119608879089355	CA: Hubertus, vielen Dank.
+P-860	-20.2835 -3.3988 -0.0503 -2.7043 -1.4804 -0.0848 -0.0025 -0.3462 -0.5292 -0.0108 -0.2856 -0.1893
+T-1075	Edward Castronova ist ein Volkswissenschaftler.
+H-1075	-6.775898456573486	▁Probleme , ▁die ▁ich ▁zu ▁lösen ▁versuchen .
+D-1075	-6.775898456573486	Probleme, die ich zu lösen versuchen.
+P-1075	-20.2941 -1.8224 -0.1615 -0.2009 -0.2059 -2.1473 -0.0535 -1.0680 -0.9136 -0.1081
+T-568	Davon ließ ich mich aber nicht entmutigen.
+H-568	-6.381322383880615	▁Aber ▁ich ▁ließ ▁mich ▁nicht ▁t ä usch en .
+D-568	-6.381322383880615	Aber ich ließ mich nicht täuschen.
+P-568	-20.3373 -0.1357 -1.0633 -3.4035 -0.1317 -0.8197 -1.9592 -0.0715 -0.0687 -0.0768 -0.1102 -0.1636
+T-919	Das ist wirklich meine Haut.
+H-919	-6.681074142456055	▁Das ▁ist ▁wirklich ▁mein ▁Ski fahrer .
+D-919	-6.681074142456055	Das ist wirklich mein Skifahrer.
+P-919	-20.3475 -0.4505 -0.1307 -2.0587 -0.5088 -0.8461 -0.3996 -0.0999 -0.1265
+T-357	Das gilt nicht für Emotionen.
+H-357	-6.7347636222839355	▁Der ▁ sa is on al ste ▁St ell ver t re ter ▁für ▁Sie .
+D-357	-6.7347636222839355	Der saisonalste Stellvertreter für Sie.
+P-357	-20.3232 -1.0629 -4.4476 -2.2760 -0.3301 -0.0315 -0.9742 -0.0283 -1.8108 -1.7461 -0.7193 -0.0740 -0.0497 -0.0568 -2.6298 -0.2836 -1.1519 -0.1535
+T-289	Widrigkeiten gehören einfach zu unserem Leben.
+H-289	-6.306323528289795	▁Es ▁ist ▁Teil ▁unseres ▁Lebens .
+D-289	-6.306323528289795	Es ist Teil unseres Lebens.
+P-289	-20.3201 -0.3428 -0.1522 -0.3299 -0.2804 -0.2879 -0.1087 -0.1379
+T-1361	Es gibt aber noch einen weiteren Grund.
+H-1361	-5.4347333908081055	▁Aber ▁es ▁gibt ▁noch ▁einen ▁anderen ▁Grund .
+D-1361	-5.4347333908081055	Aber es gibt noch einen anderen Grund.
+P-1361	-20.3277 -0.3706 -0.1183 -0.0295 -0.2382 -0.0588 -0.0875 -0.0611 -0.2026 -0.1419
+T-1289	Lass die Leute doch machen, was sie wollen.
+H-1289	-5.525190353393555	▁Lass en ▁Sie ▁die ▁Leute ▁tun , ▁was ▁sie ▁tun ▁wollen .
+D-1289	-5.525190353393555	Lassen Sie die Leute tun, was sie tun wollen.
+P-1289	-20.2903 -0.2485 -0.1933 -0.1704 -1.9928 -0.3596 -0.8132 -0.1081 -0.0398 -0.0747 -1.6286 -0.6047 -0.2660 -0.1267
+T-185	Ein "Manhattan Projekt"?
+H-185	-6.679896831512451	▁Sie ▁sagte ▁zu ▁einem ▁Online - Ha n del s - Projekt .
+D-185	-6.679896831512451	Sie sagte zu einem Online-Handels-Projekt.
+P-185	-20.2875 -0.5574 -3.0027 -0.9346 -0.5032 -4.0914 -0.1064 -1.4344 -0.0451 -0.0064 -0.4518 -1.2044 -1.0061 -0.1451 -0.1410
+T-761	Sie haben buchstäblich den Hebel umgelegt.
+H-761	-6.32861328125	▁Sie ▁stecken ▁den ▁S wi s s er ▁recht zeit ig ▁here in .
+D-761	-6.32861328125	Sie stecken den Swisser rechtzeitig herein.
+P-761	-20.3154 -0.4418 -2.2458 -0.2603 -1.2917 -0.4119 -0.4158 -0.1041 -0.3772 -3.1382 -0.7380 -0.0655 -3.3242 -0.0753 -0.0773 -0.1200
+T-1269	Die Daten belegen das ständig.
+H-1269	-6.48305082321167	▁Die ▁Daten ▁sagen , ▁dass ▁es ▁die ▁ganze ▁Zeit ▁dauern ▁wird .
+D-1269	-6.48305082321167	Die Daten sagen, dass es die ganze Zeit dauern wird.
+P-1269	-20.2938 -0.5838 -0.0345 -3.0606 -2.7256 -0.5671 -0.1382 -0.5415 -0.0336 -0.0687 -1.3588 -1.9091 -0.1473 -0.1206
+T-612	Also, das hat mich wirklich umgehauen.
+H-612	-7.537494659423828	▁Das ▁ist ▁mein ▁Sohn , ▁den ▁ich ▁kenne .
+D-612	-7.537494659423828	Das ist mein Sohn, den ich kenne.
+P-612	-20.3366 -0.7996 -0.3730 -0.7017 -2.4852 -0.7307 -3.7569 -0.2667 -2.0372 -0.1434 -0.1423
+T-1305	Wir haben das alles gemacht.
+H-1305	-6.726138114929199	▁Wir ▁haben ▁es ▁alles ▁möglich ▁gemacht .
+D-1305	-6.726138114929199	Wir haben es alles möglich gemacht.
+P-1305	-20.3299 -0.3779 -0.4520 -1.1752 -0.9333 -1.6395 -0.0116 -0.1034 -0.1140
+T-1193	Die gleiche Sache, nur größer.
+H-1193	-7.3896942138671875	▁Das ▁ist ▁alles ▁geschützt er ▁Wald .
+D-1193	-7.3896942138671875	Das ist alles geschützter Wald.
+P-1193	-20.3291 -0.4325 -1.7945 -1.1073 -3.3986 -0.0803 -0.2077 -0.1361 -0.1305
+T-216	Das ist super wichtig.
+H-216	-6.7722039222717285	▁Das ▁ist ▁sehr ▁wichtig .
+D-216	-6.7722039222717285	Das ist sehr wichtig.
+P-216	-20.3563 -0.0970 -0.0867 -0.9050 -0.0876 -0.1231 -0.1107
+T-900	Das hier ist meine Haut.
+H-900	-6.95750093460083	▁Das ▁ist ▁meine ▁Ski z ze .
+D-900	-6.95750093460083	Das ist meine Skizze.
+P-900	-20.3397 -0.2231 -0.1900 -0.9071 -2.2412 -0.5645 -0.0573 -1.3492 -0.1294
+T-754	Sie machten das, indem sie das Land entwässerten.
+H-754	-5.836756706237793	▁Sie ▁machten ▁es ▁durch ▁die ▁Z er b re ch lichkeit ▁der ▁Landschaft .
+D-754	-5.836756706237793	Sie machten es durch die Zerbrechlichkeit der Landschaft.
+P-754	-20.3476 -0.2750 -1.6950 -0.2435 -0.6168 -2.9227 -0.7052 -0.1432 -1.2633 -0.0470 -0.0409 -0.7802 -0.4105 -0.9387 -0.2682 -0.1089
+T-163	Die Menschen müssen sich dabei gut fühlen.
+H-163	-7.190428256988525	▁Die ▁Leute ▁müssen ▁gut ▁darüber ▁reden .
+D-163	-7.190428256988525	Die Leute müssen gut darüber reden.
+P-163	-20.3114 -1.6216 -0.3438 -1.2965 -1.1619 -0.1716 -1.7126 -0.1154 -0.1371
+T-810	Die Garnelen fressen den Phytoplankton.
+H-810	-5.585805416107178	▁Der ▁Ra up e , ▁der ▁Ra up e , ▁der ▁Ra up e , ▁der ▁Ra up e .
+D-810	-5.585805416107178	Der Raupe, der Raupe, der Raupe, der Raupe.
+P-810	-20.3106 -0.9245 -3.3004 -1.3839 -1.6961 -0.1405 -0.3932 -2.1025 -0.3084 -0.1836 -0.1274 -0.1395 -0.5173 -0.2935 -0.1394 -0.7404 -0.8060 -0.6088 -0.5436 -0.1258 -0.7650 -0.1389
+T-633	Niemand hatte je das Innere des Wracks erkundet.
+H-633	-6.840007781982422	▁Kein er ▁sah ▁in ▁dem ▁Re iß ver schluss ▁aus .
+D-633	-6.840007781982422	Keiner sah in dem Reißverschluss aus.
+P-633	-20.2612 -1.9726 -0.0939 -1.4239 -0.7916 -0.9804 -1.1997 -3.8697 -0.3668 -0.1243 -0.6133 -0.0716 -0.1038
+T-658	Ich habe eine Menge über Wissenschaft gelernt.
+H-658	-6.042507171630859	▁Ich ▁habe ▁viel ▁über ▁Wissenschaft ▁gelernt .
+D-658	-6.042507171630859	Ich habe viel über Wissenschaft gelernt.
+P-658	-20.2878 -0.2675 -0.9577 -0.0379 -0.1347 -0.4255 -0.2164 -0.1114 -0.1432
+T-1308	Wir sind losgeworden, was nicht funktioniert hat.
+H-1308	-5.7855305671691895	▁Wir ▁konnten ▁die ▁Dinge ▁los wer den , ▁die ▁es ▁nicht ▁gab .
+D-1308	-5.7855305671691895	Wir konnten die Dinge loswerden, die es nicht gab.
+P-1308	-20.3257 -0.3293 -3.6431 -0.7046 -0.3002 -1.9479 -0.3334 -0.0727 -0.2181 -0.1242 -0.9729 -0.1538 -0.0164 -0.1044 -0.1297
+T-1197	Ich schrieb den Artikel, ich machte weiter.
+H-1197	-6.135035991668701	▁Ich ▁habe ▁die ▁Geschichte ▁geschrieben , ▁über ▁die ▁ich ▁gesprochen ▁habe .
+D-1197	-6.135035991668701	Ich habe die Geschichte geschrieben, über die ich gesprochen habe.
+P-1197	-20.3029 -0.0687 -2.4526 -0.1715 -0.0914 -2.0180 -0.1632 -1.4149 -0.1142 -0.2250 -2.5614 -0.0664 -0.1322 -0.1054
+T-507	Nun sehe ich Greg Lemond.
+H-507	-6.219848155975342	▁Und ▁ich ▁sehe ▁Gra v ity ▁in ▁der ▁Mo n arch ie .
+D-507	-6.219848155975342	Und ich sehe Gravity in der Monarchie.
+P-507	-20.3206 -0.9739 -0.4726 -0.6535 -4.4547 -2.0447 -0.1454 -0.4468 -0.7259 -0.1234 -0.1034 -0.8943 -0.0094 -0.1121 -0.1009
+T-1263	Das ist der Planet, auf dem wir leben.
+H-1263	-6.315035820007324	▁Da r auf ▁müssen ▁wir ▁uns ▁ein lassen .
+D-1263	-6.315035820007324	Darauf müssen wir uns einlassen.
+P-1263	-20.3872 -2.7111 -0.0909 -0.0523 -1.6304 -0.1370 -0.4184 -0.8164 -0.1575 -0.0840 -0.1352
+T-16	Wir müssen die Nachricht verbreiten.
+H-16	-5.528127670288086	▁Wir ▁müssen ▁die ▁Ma s s ak er ▁an pack en .
+D-16	-5.528127670288086	Wir müssen die Massaker anpacken.
+P-16	-20.3558 -0.4647 -0.6052 -2.1571 -0.3989 -0.1385 -0.6321 -0.2004 -0.0928 -0.7454 -0.7560 -0.1158 -0.1370 -0.1315
+T-1011	Und es gibt haufenweise Mitarbeiter.
+H-1011	-6.609230041503906	▁Es ▁sind ▁auch ▁T ö pf e .
+D-1011	-6.609230041503906	Es sind auch Töpfe.
+P-1011	-20.3933 -0.4119 -0.8473 -0.6151 -2.8410 -0.6787 -0.1011 -0.1865 -0.0845 -0.1524
+T-1194	Die Leute spielten verrückt.
+H-1194	-6.636824131011963	▁Die ▁Leute ▁ ä ssen ▁Sch re ie .
+D-1194	-6.636824131011963	Die Leute ässen Schreie.
+P-1194	-20.2720 -0.3239 -0.1684 -0.9663 -3.1353 -1.7336 -0.9986 -0.0272 -0.1175 -0.0710 -0.1627
+T-1240	Er heißt Paul Offit.
+H-1240	-6.322865009307861	▁Sein ▁Name ▁ist ▁P le u ro bot er .
+D-1240	-6.322865009307861	Sein Name ist Pleuroboter.
+P-1240	-20.2981 -2.4382 -1.2352 -0.0838 -0.5744 -1.9088 -0.1580 -0.0154 -0.0752 -0.8122 -0.3325 -0.1496
+T-936	Das Messer, das Sie untersuchen können; meine Hand, die Sie untersuchen können.
+H-936	-6.5688347816467285	▁In ▁der ▁B re ite , ▁die ▁man ▁sehen ▁könnte , ▁sieht ▁man , ▁was ▁man ▁tun ▁könnte .
+D-936	-6.5688347816467285	In der Breite, die man sehen könnte, sieht man, was man tun könnte.
+P-936	-20.3038 -1.1952 -1.3786 -2.1322 -0.3043 -0.0342 -0.7084 -0.6470 -0.7822 -1.8726 -0.4049 -0.7460 -3.8423 -0.0044 -0.6161 -1.6651 -0.4168 -2.3501 -1.1821 -0.1118 -0.1168
+T-767	Man konnte sich also wohl dabei fühlen, ihn zu verkaufen.
+H-767	-6.7026824951171875	▁Sie ▁würden ▁sich ▁freue n , ▁es ▁zu ▁verkaufen .
+D-767	-6.7026824951171875	Sie würden sich freuen, es zu verkaufen.
+P-767	-20.3431 -1.6277 -1.3571 -1.1825 -0.5344 -0.0846 -0.1545 -1.6381 -0.4984 -2.0849 -0.1116 -0.1514
+T-1230	Passiert nicht sehr oft.
+H-1230	-6.787073135375977	▁Und ▁das ▁passiert ▁nicht ▁sehr ▁viel .
+D-1230	-6.787073135375977	Und das passiert nicht sehr viel.
+P-1230	-20.2633 -1.7986 -1.0828 -0.4069 -1.0400 -0.3852 -0.1668 -0.1135 -0.1074
+T-1196	Aber wissen Sie, Ich tue was ich tue.
+H-1196	-5.422596454620361	▁Aber ▁wissen ▁Sie , ▁ich ▁tue ▁das , ▁was ▁ich ▁tue .
+D-1196	-5.422596454620361	Aber wissen Sie, ich tue das, was ich tue.
+P-1196	-20.3051 -0.4175 -2.4206 -0.0788 -0.1424 -0.3268 -0.9138 -0.2456 -0.1043 -0.1360 -0.1224 -0.8993 -0.1829 -0.1216
+T-859	Und Sie können alles untersuchen.
+H-859	-6.927997589111328	▁Und ▁Sie ▁können ▁alles am t ▁erklären .
+D-859	-6.927997589111328	Und Sie können allesamt erklären.
+P-859	-20.3176 -0.4422 -1.1170 -0.1623 -0.2543 -3.4019 -0.0772 -1.5532 -0.1272 -0.1280
+T-1023	Es klingt vielleicht übel.
+H-1023	-6.128495693206787	▁Es ▁könnte ▁sch li essen , ▁dass ▁es ▁eine ▁schlechte ▁Sache ▁ist .
+D-1023	-6.128495693206787	Es könnte schliessen, dass es eine schlechte Sache ist.
+P-1023	-20.3215 -0.6925 -0.6476 -1.7132 -3.7222 -0.0725 -1.1006 -1.5402 -0.1742 -0.3840 -0.4280 -0.0405 -0.0497 -0.1012 -0.1297
+T-126	Wenn Sie Erdgas verbrennen: Nein.
+H-126	-7.461450576782227	▁N en nen ▁Sie ▁diesen ▁Gen t le man ?
+D-126	-7.461450576782227	Nennen Sie diesen Gentleman?
+P-126	-20.3116 -6.0265 -0.1584 -0.0272 -0.1979 -1.9294 -2.5162 -0.7787 -0.0125 -0.0049 -1.0282 -0.1469
+T-930	Und ich werde Ihnen zeigen, wie er funktioniert.
+H-930	-6.184643745422363	▁Und ▁ich ▁zeige ▁Ihnen , ▁wie ▁es ▁funktioniert .
+D-930	-6.184643745422363	Und ich zeige Ihnen, wie es funktioniert.
+P-930	-20.2929 -1.2784 -0.0889 -0.4197 -0.4136 -1.5123 -0.4203 -1.0392 -0.3847 -0.1084 -0.1122
+T-29	Dieses Ding wo man ihn öffnet und Sachen hinein- oder herausbringt.
+H-29	-7.340826988220215	▁Wenn ▁Sie ▁das ▁also ▁nicht ▁getan ▁haben .
+D-29	-7.340826988220215	Wenn Sie das also nicht getan haben.
+P-29	-20.3316 -1.7365 -0.4812 -1.1026 -2.0781 -1.2975 -0.6486 -0.3521 -1.0514 -0.1448
+T-603	Das Studio wusste das aber nicht.
+H-603	-6.906255722045898	▁Steve ▁Jobs : ▁Steve ▁also ▁wusste ▁gar ▁nicht , ▁was .
+D-603	-6.906255722045898	Steve Jobs: Steve also wusste gar nicht, was.
+P-603	-20.2979 -2.5483 -0.4335 -0.8346 -1.6222 -2.7905 -0.1772 -0.7442 -0.1858 -1.0520 -0.8629 -0.4963 -0.1363
+T-779	Ich weiß nichts über Fisch.
+H-779	-6.419257640838623	▁Ich ▁weiß ▁nicht , ▁was ▁es ▁damit ▁auf ▁sich ▁hat .
+D-779	-6.419257640838623	Ich weiß nicht, was es damit auf sich hat.
+P-779	-20.3021 -1.6293 -0.4753 -1.8922 -0.4809 -0.2519 -3.6242 -0.6313 -0.0274 -0.1273 -0.1841 -0.1721 -0.1144
+T-908	Macht Sie das verrückt?
+H-908	-7.202032089233398	▁Ich ▁fl ü ster te ▁Sie ▁vielleicht ▁aus .
+D-908	-7.202032089233398	Ich flüsterte Sie vielleicht aus.
+P-908	-20.3120 -0.1283 -5.6943 -0.0488 -0.5343 -0.2965 -0.7270 -0.7605 -1.5775 -0.1786 -0.1015
+T-916	Wie sieht das hier aus?
+H-916	-7.354398250579834	▁Also ▁sah ▁ich ▁da ▁draußen ▁aus .
+D-916	-7.354398250579834	Also sah ich da draußen aus.
+P-916	-20.3147 -5.3975 -0.3879 -0.3495 -0.5444 -0.0155 -0.2614 -0.0898 -0.1241
+T-1173	Das ist also die gute Nachricht.
+H-1173	-5.791654109954834	▁Das ▁ist ▁also ▁die ▁gute ▁Nachricht .
+D-1173	-5.791654109954834	Das ist also die gute Nachricht.
+P-1173	-20.3692 -0.0564 -0.2032 -0.4521 -0.1198 -0.1086 -0.0761 -0.1307 -0.1285
+T-1336	Es geht nicht darum, Gene herumzuschieben.
+H-1336	-6.666280746459961	▁Hier ▁geht ▁es ▁darum , ▁Ge den k stätte n ▁herzustellen .
+D-1336	-6.666280746459961	Hier geht es darum, Gedenkstätten herzustellen.
+P-1336	-20.3337 -1.6009 -0.2954 -0.0689 -1.7780 -0.0746 -3.0316 -1.2321 -0.5165 -0.0211 -0.1081 -3.1877 -0.1117 -0.1154
+T-1219	Es macht keinen Unterschied.
+H-1219	-6.515407085418701	▁Das ▁spielt ▁keine ▁Rolle .
+D-1219	-6.515407085418701	Das spielt keine Rolle.
+P-1219	-20.2871 -0.1196 -0.1493 -0.1115 -0.0510 -0.0754 -0.1473
+T-1282	Ich liebe die Placebo-Industrie. (Beifall)
+H-1282	-6.912975311279297	▁Ich ▁liebe ▁es , ▁mit ▁S ekt ▁zu ▁experiment ieren .
+D-1282	-6.912975311279297	Ich liebe es, mit Sekt zu experimentieren.
+P-1282	-20.2882 -0.2407 -0.5052 -0.3992 -0.0958 -3.3788 -2.9049 -0.9786 -0.1042 -3.0083 -0.0999 -0.1030 -0.1062
+T-1320	Das hat mit Wissenschaft nichts zu tun.
+H-1320	-5.587690353393555	▁Wissen ▁Sie , ▁es ▁gibt ▁nichts , ▁was ▁die ▁Wissenschaft ▁an geht .
+D-1320	-5.587690353393555	Wissen Sie, es gibt nichts, was die Wissenschaft angeht.
+P-1320	-20.3058 -1.6219 -0.0421 -0.0824 -0.8074 -0.8741 -0.0724 -0.5930 -0.2256 -0.5135 -0.0744 -2.5054 -0.3899 -0.1331 -0.1308
+T-1256	Niemand hat das je zuvor gesagt.
+H-1256	-7.3018364906311035	▁Das ▁hat ▁noch ▁niemand ▁zuvor ▁gesehen .
+D-1256	-7.3018364906311035	Das hat noch niemand zuvor gesehen.
+P-1256	-20.3302 -0.4924 -0.5362 -0.3300 -0.3582 -1.7837 -3.2543 -0.0758 -0.1275
+T-1363	Und ihn dann zu realisieren.
+H-1363	-6.222146511077881	▁Und ▁dann ▁ex plo d ieren ▁sie .
+D-1363	-6.222146511077881	Und dann explodieren sie.
+P-1363	-20.3440 -1.7852 -0.0830 -1.1202 -0.3751 -0.0388 -0.3607 -0.0570 -0.4909 -0.1160
+T-1069	Sie erschaffen eine epische Geschichte.
+H-1069	-6.547101974487305	▁Und ▁jede ▁andere ▁Sache , ▁die ▁auf ▁der ▁Welt ▁zu ▁tun ▁hat .
+D-1069	-6.547101974487305	Und jede andere Sache, die auf der Welt zu tun hat.
+P-1069	-20.2917 -1.8564 -2.9175 -0.5251 -1.7704 -1.0215 -0.1136 -0.8390 -0.1637 -0.2215 -0.5242 -2.0075 -0.4153 -0.4301 -0.1459
+T-1329	Es ist etwa wie eine Kartoffel.
+H-1329	-6.197478771209717	▁Das ▁ist ▁wie ▁ein ▁Te ek es sel .
+D-1329	-6.197478771209717	Das ist wie ein Teekessel.
+P-1329	-20.3393 -0.5307 -0.1099 -0.5786 -0.1301 -1.2609 -2.8966 -0.0749 -0.0043 -0.0752 -0.1242
+T-618	Das ist echt cool. "
+H-618	-7.097818851470947	▁Das ▁ist ▁wirklich ▁cool .
+D-618	-7.097818851470947	Das ist wirklich cool.
+P-618	-20.3300 -0.2302 -0.0784 -1.3545 -0.6011 -0.0943 -0.1245
+T-825	Ich koche fast nie damit.
+H-825	-6.543848514556885	▁Ich ▁habe ▁noch ▁nie ▁darauf ▁ge ach te t .
+D-825	-6.543848514556885	Ich habe noch nie darauf geachtet.
+P-825	-20.2871 -0.4963 -2.3888 -1.1676 -0.0183 -3.0279 -0.0443 -1.3150 -0.0187 -0.0885 -0.0831 -0.1276
+T-923	Normalerweise würde ich jetzt die Nadel herausnehmen.
+H-923	-6.585413932800293	▁Dann ▁nahm ▁ich ▁die ▁Not iz ze t tel .
+D-923	-6.585413932800293	Dann nahm ich die Notizzettel.
+P-923	-20.3489 -1.3564 -3.0219 -0.0929 -0.7294 -1.9909 -0.3576 -0.9403 -0.0539 -0.0104 -0.2353 -0.1098
+T-159	Das ist also eine harte Nuss.
+H-159	-6.162477970123291	▁Das ▁ist ▁also ▁eine ▁Top - L ist e .
+D-159	-6.162477970123291	Das ist also eine Top-Liste.
+P-159	-20.3695 -0.0486 -0.1631 -0.0385 -1.2790 -2.3394 -0.1618 -2.3579 -0.3269 -0.0835 -0.0815 -0.1198
+T-238	Damals wurden Gymnasien in Gesamtschulen umgewandelt.
+H-238	-6.1388373374938965	▁Dies ▁ist ▁das ▁sch r ä n k ende ▁Kind .
+D-238	-6.1388373374938965	Dies ist das schränkende Kind.
+P-238	-20.3122 -1.2803 -1.1753 -0.8922 -0.7430 -1.2260 -0.1041 -0.4535 -0.3111 -0.0576 -1.8100 -0.1135 -0.1268
+T-719	Ich habe nur zwei geliebt.
+H-719	-6.350060939788818	▁Ich ▁habe ▁nur ▁zwei ▁ge liebt .
+D-719	-6.350060939788818	Ich habe nur zwei geliebt.
+P-719	-20.2674 -0.1130 -0.1112 -2.1475 -0.3217 -0.3981 -0.0281 -0.1858 -0.1587
+T-665	Wir spielen mal gerade die Produktionskosten ein.
+H-665	-7.162697792053223	▁Wir ▁sind ▁richtig ▁br em s en , ▁auch ▁wenn ▁das ▁grundlegende ▁Priorität ▁ist .
+D-665	-7.162697792053223	Wir sind richtig bremsen, auch wenn das grundlegende Priorität ist.
+P-665	-20.3400 -0.3434 -1.0847 -2.6396 -3.4409 -1.1078 -0.0977 -0.4197 -1.7616 -1.6622 -0.0385 -2.8149 -2.6901 -0.4195 -0.0844 -0.1468 -0.1136
+T-1052	Spieler sitzen nicht herum.
+H-1052	-5.685418128967285	▁Wir ▁versuchen ▁es ▁zu ▁versuchen ▁und ▁zu ▁versuchen .
+D-1052	-5.685418128967285	Wir versuchen es zu versuchen und zu versuchen.
+P-1052	-20.3056 -0.3840 -0.2731 -0.1396 -1.3042 -0.0270 -0.2344 -0.9315 -0.0248 -0.2165 -0.1254
+T-394	Ich werde nicht ins Detail gehen.
+H-394	-6.654371738433838	▁Ich ▁ging ▁nicht ▁in ▁die ▁Daten .
+D-394	-6.654371738433838	Ich ging nicht in die Daten.
+P-394	-20.2742 -1.1275 -0.7272 -0.5147 -0.1747 -0.9210 -0.4735 -0.5350 -0.1208
+T-1245	Und das sagt er tatsächlich so.
+H-1245	-5.948155879974365	▁Und ▁er ▁sagt ▁es ▁tatsächlich ▁über ▁die ▁Arbeit .
+D-1245	-5.948155879974365	Und er sagt es tatsächlich über die Arbeit.
+P-1245	-20.3247 -0.3740 -0.1199 -0.3053 -0.3742 -1.0396 -0.3152 -1.8055 -0.2146 -0.1019 -0.0988
+T-605	Wir filmen das echte Wrack.
+H-605	-6.947351932525635	▁Wir ▁werden ▁es ▁in ▁voll em ▁Tempo ▁an pack en .
+D-605	-6.947351932525635	Wir werden es in vollem Tempo anpacken.
+P-605	-20.3688 -0.4880 -0.8954 -0.6721 -3.6317 -1.9414 -0.0425 -0.9759 -0.7061 -2.2889 -0.1155 -0.1064 -0.1407
+T-1323	Sie ist kein Land.
+H-1323	-6.556637763977051	▁Es ▁ist ▁kein ▁Land .
+D-1323	-6.556637763977051	Es ist kein Land.
+P-1323	-20.3223 -0.1728 -0.1158 -0.0908 -0.1769 -0.0795 -0.1155
+T-1337	Es geht nicht um Chemikalien.
+H-1337	-6.783531665802002	▁Es ▁geht ▁hier ▁nicht ▁um ▁die ▁Chemie .
+D-1337	-6.783531665802002	Es geht hier nicht um die Chemie.
+P-1337	-20.3267 -0.0983 -0.0551 -1.2305 -0.2374 -0.1303 -2.8214 -1.8314 -0.1504 -0.1242
+T-793	Es gibt kein Futter.
+H-793	-7.337238788604736	▁Es ▁gibt ▁keinen ▁Strom ▁zur ▁Oberfläche .
+D-793	-7.337238788604736	Es gibt keinen Strom zur Oberfläche.
+P-793	-20.3096 -0.4455 -0.2111 -0.8418 -4.0911 -0.2246 -1.0618 -0.1165 -0.1187
+T-330	Ich hatte keine Ahnung wer er ist.
+H-330	-5.984326362609863	▁Ich ▁habe ▁keine ▁Ahnung , ▁wer ▁es ▁ist .
+D-330	-5.984326362609863	Ich habe keine Ahnung, wer es ist.
+P-330	-20.2821 -0.1225 -0.2821 -0.0459 -0.1460 -0.1824 -0.0232 -3.7656 -0.1385 -0.1165 -0.1214
+T-763	Sie fluteten die Kanäle.
+H-763	-5.582077503204346	▁Sie ▁fl ü ster ten ▁die ▁Ka n ä le .
+D-763	-5.582077503204346	Sie flüsterten die Kanäle.
+P-763	-20.3208 -0.1748 -3.3693 -0.1719 -0.1706 -0.0668 -0.1597 -0.2010 -0.5710 -0.4563 -0.0828 -0.1412 -0.1253
+T-1217	Die Daten kamen herein.
+H-1217	-6.997367858886719	▁Die ▁Daten ▁ kehr ten ▁zurück .
+D-1217	-6.997367858886719	Die Daten kehrten zurück.
+P-1217	-20.2801 -0.3077 -0.0142 -2.7631 -2.1625 -0.0593 -0.2361 -0.1713 -0.1561
+T-1389	Was glauben Sie passierte nun?
+H-1389	-7.246425628662109	▁Was ▁hält st ▁du ▁da ▁vor ?
+D-1389	-7.246425628662109	Was hältst du da vor?
+P-1389	-20.3117 -0.7226 -2.0002 -0.0573 -0.1027 -1.3911 -2.1321 -0.2173 -0.1464
+T-1371	Wer ist am erfolgreichsten?
+H-1371	-7.291810512542725	▁Wer ▁tut ▁das ▁sehr , ▁sehr ▁schnell ?
+D-1371	-7.291810512542725	Wer tut das sehr, sehr schnell?
+P-1371	-20.2988 -1.0507 -2.6853 -0.6695 -1.2413 -1.4633 -0.0475 -1.2515 -0.1985 -0.1228
+T-9	Was müssen wir also tun?
+H-9	-6.242125988006592	▁Was ▁müssen ▁wir ▁also ▁tun ?
+D-9	-6.242125988006592	Was müssen wir also tun?
+P-9	-20.3441 -0.7153 -0.1642 -0.1034 -0.0819 -0.1306 -0.0504 -0.1464
+T-546	Damit höre ich auf, vielen Dank.
+H-546	-7.515775680541992	▁Und ▁daher ▁danke ▁ich ▁Ihnen .
+D-546	-7.515775680541992	Und daher danke ich Ihnen.
+P-546	-20.3171 -2.1150 -1.7656 -1.4271 -0.1120 -0.1125 -0.2010 -0.1212
+T-1264	Tun Sie nicht so, als ob er das nicht ist.
+H-1264	-6.804939270019531	▁Tu n ▁Sie ▁das ▁nicht ▁vor .
+D-1264	-6.804939270019531	Tun Sie das nicht vor.
+P-1264	-20.3312 -2.2812 -0.1402 -0.0997 -0.2160 -0.0534 -1.7105 -0.4261 -0.1730
+T-787	Aber was essen Deine Fische?
+H-787	-5.940980434417725	▁Aber ▁was ▁hält st ▁du ▁von ▁deine m ▁Fisch ?
+D-787	-5.940980434417725	Aber was hältst du von deinem Fisch?
+P-787	-20.3146 -0.3061 -1.2554 -1.1063 -0.5464 -0.1623 -0.2673 -1.2732 -0.0699 -0.8536 -0.0345 -0.1960
+T-1276	Wir haben kein Vertrauen ins System.
+H-1276	-6.575747489929199	▁Wir ▁ver h ü ten ▁den ▁Mann ▁nicht .
+D-1276	-6.575747489929199	Wir verhüten den Mann nicht.
+P-1276	-20.3552 -0.2375 -2.4398 -2.5390 -0.1216 -0.0817 -0.4319 -1.1857 -0.0814 -0.0893 -0.1562
+T-1243	Ziemlich gut, nicht?
+H-1243	-6.901200771331787	▁Wir ▁sind ▁ziemlich ▁gut .
+D-1243	-6.901200771331787	Wir sind ziemlich gut.
+P-1243	-20.3381 -0.1629 -0.0391 -1.2429 -0.0876 -0.1695 -0.1411
+T-321	Es gibt kein Normal.
+H-321	-6.584617614746094	▁Es ▁gibt ▁keinen ▁normal en ▁Kurs .
+D-321	-6.584617614746094	Es gibt keinen normalen Kurs.
+P-321	-20.2849 -0.0822 -0.1018 -1.2131 -0.5265 -0.0973 -2.0963 -0.0733 -0.1326
+T-935	Also, sehen Sie, was passiert.
+H-935	-7.44514799118042	▁Und ▁so ▁ist ▁das ▁passiert .
+D-935	-7.44514799118042	Und so ist das passiert.
+P-935	-20.3453 -3.1946 -0.1172 -0.4983 -0.8072 -0.6284 -0.2312 -0.1034
+T-938	Ich schiebe meinen Ärmel zurück.
+H-938	-7.4838690757751465	▁Ich ▁gehe ▁zum ▁Schluss ▁zurück .
+D-938	-7.4838690757751465	Ich gehe zum Schluss zurück.
+P-938	-20.2902 -0.1763 -0.3169 -2.9927 -1.6127 -0.4480 -0.0933 -0.1302
+T-663	Wieso mache ich das?
+H-663	-7.244502067565918	▁Warum ▁verb ring e ▁ich ▁das ?
+D-663	-7.244502067565918	Warum verbringe ich das?
+P-663	-20.2993 -0.9190 -4.7858 -0.0501 -0.0343 -0.0490 -0.7577 -0.0463 -0.1325
+T-1270	Sie verdunkeln Ihren Urin.
+H-1270	-6.789216041564941	▁Der ▁D arm chi p ▁ist ▁ein ▁J unk food - A l go ri th m us .
+D-1270	-6.789216041564941	Der Darmchip ist ein Junkfood-Algorithmus.
+P-1270	-20.3167 -1.9911 -3.7433 -1.8606 -1.2379 -0.0316 -0.3285 -2.4711 -3.5419 -1.5652 -0.9514 -0.0832 -2.1632 -0.7009 -0.7808 -0.0102 -0.0018 -0.1199 -0.0231 -0.1374 -0.1244
+T-872	Ich nehme diese Hand weg.
+H-872	-6.702975749969482	▁Ich ▁nehme ▁die ▁Hand ▁weg .
+D-872	-6.702975749969482	Ich nehme die Hand weg.
+P-872	-20.3237 -0.1016 -0.1567 -0.4192 -0.5713 -1.5081 -0.1340 -0.1266
+T-1340	Denn wissen Sie was?
+H-1340	-7.662699222564697	▁Weil ▁man ▁etwas ▁weiß .
+D-1340	-7.662699222564697	Weil man etwas weiß.
+P-1340	-20.3039 -0.2439 -1.5508 -0.7278 -1.0409 -0.5758 -0.1855
+T-785	Er zeigte auf die Algen.
+H-785	-6.870418548583984	▁Sie ▁stellen ▁die ▁Al ge b ra ▁vor .
+D-785	-6.870418548583984	Sie stellen die Algebra vor.
+P-785	-20.2885 -1.5322 -2.7543 -0.2572 -0.8537 -1.6616 -0.0492 -0.0286 -1.2990 -0.1178 -0.1193
+T-1275	Wir hassen eine zu starke Regierung.
+H-1275	-7.211399078369141	▁Wir ▁has s en ▁gute ▁Regierung s führung .
+D-1275	-7.211399078369141	Wir hassen gute Regierungsführung.
+P-1275	-20.3395 -0.1348 -4.5214 -0.2259 -0.1245 -2.8671 -0.7457 -0.7111 -0.4878 -0.1108 -0.1299
+T-320	Mal ehrlich - wer ist normal?
+H-320	-6.797520160675049	▁Und ▁wer ▁ist ▁normal ?
+D-320	-6.797520160675049	Und wer ist normal?
+P-320	-20.2990 -0.1615 -0.4468 -0.1786 -0.4723 -0.1811 -0.1087
+T-888	Und die Form spielt eine Rolle.
+H-888	-7.0472917556762695	▁Und ▁die ▁Form ▁hat ▁noch ▁etwas .
+D-888	-7.0472917556762695	Und die Form hat noch etwas.
+P-888	-20.3118 -0.9067 -1.0236 -0.3392 -0.1299 -2.7922 -0.1855 -0.4960 -0.1523
+T-404	Woher wissen wir das?
+H-404	-6.554508686065674	▁Wie ▁können ▁wir ▁das ▁wissen ?
+D-404	-6.554508686065674	Wie können wir das wissen?
+P-404	-20.3592 -0.7557 -0.4567 -0.0722 -0.1051 -0.8593 -0.0816 -0.1343
+T-850	Es ist fast nichts mehr übrig.
+H-850	-5.955451011657715	▁Da ▁gibt ▁es ▁nichts ▁Ver le tz licher es .
+D-850	-5.955451011657715	Da gibt es nichts Verletzlicheres.
+P-850	-20.3142 -0.3919 -2.6122 -0.1144 -0.6228 -1.4313 -0.1887 -0.0605 -0.3269 -0.0600 -0.1828 -0.1443
+T-714	Nennen wir ihn Don.
+H-714	-5.766235828399658	▁N en nen ▁wir ▁ihn ▁" Z ur ▁Sp ende ".
+D-714	-5.766235828399658	Nennen wir ihn "Zur Spende".
+P-714	-20.3236 -0.7372 -0.0336 -0.0752 -0.0691 -0.0750 -0.3057 -3.7976 -0.5014 -0.4066 -0.0325 -0.3880 -0.1241
+T-1076	Seine Arbeit ist genial.
+H-1076	-7.239107608795166	▁Sie ▁begannen ▁die ▁Dem ons tra nten ▁aufzu kl ären .
+D-1076	-7.239107608795166	Sie begannen die Demonstranten aufzuklären.
+P-1076	-20.3063 -0.2367 -4.0808 -0.6689 -3.0929 -0.4839 -0.0087 -0.1933 -2.0767 -2.2925 -0.0372 -0.1171 -0.1376
+T-666	Von Ruhm keine Spur.
+H-666	-7.123561382293701	▁Es ▁gibt ▁kein ▁Gesicht ▁darin .
+D-666	-7.123561382293701	Es gibt kein Gesicht darin.
+P-666	-20.3340 -0.6978 -0.5435 -1.2232 -1.2667 -0.5229 -0.0581 -0.1596
+T-984	Das ist ein epischer Sieg.
+H-984	-6.45889139175415	▁Das ▁ist ▁ein ▁E iff el t ur m .
+D-984	-6.45889139175415	Das ist ein Eiffelturm.
+P-984	-20.3557 -0.1037 -0.1336 -0.7613 -3.1289 -3.7688 -0.0025 -0.1041 -0.0054 -0.0760 -0.1160 -0.1298
+T-1222	Und das verstehe ich.
+H-1222	-6.6227827072143555	▁Und ▁ich ▁er n äh re ▁mich ▁daran .
+D-1222	-6.6227827072143555	Und ich ernähre mich daran.
+P-1222	-20.3502 -1.1090 -0.0949 -2.6501 -0.6924 -0.0839 -0.0438 -0.1131 -2.5063 -0.1513 -0.1226
+T-1048	Als Erstes: Dringlichkeits-Optimismus.
+H-1048	-6.487027168273926	▁Dinge , ▁mit ▁denen ▁ich ▁auf war te .
+D-1048	-6.487027168273926	Dinge, mit denen ich aufwarte.
+P-1048	-20.2882 -1.3303 -0.1193 -0.9390 -0.0603 -0.1489 -1.2678 -2.2292 -0.5950 -0.2164 -0.1507
+T-1313	Warum tun wir das?
+H-1313	-6.633784770965576	▁Warum ▁tun ▁wir ▁das ?
+D-1313	-6.633784770965576	Warum tun wir das?
+P-1313	-20.3441 -0.2243 -0.4327 -0.0940 -0.0601 -0.0407 -0.1256
+T-1163	Ich hoffe, Sie verzeihen mir.
+H-1163	-6.935710906982422	▁Lass en ▁Sie ▁uns ▁das ▁also ▁vergessen .
+D-1163	-6.935710906982422	Lassen Sie uns das also vergessen.
+P-1163	-20.3248 -3.3368 -0.1562 -0.0565 -0.7202 -1.3085 -0.4987 -0.9110 -0.1373 -0.1615
+T-912	Also, werde ich Sie Ihnen zeigen.
+H-912	-6.414572238922119	▁Ich ▁kann ▁ihm ▁also ▁zeigen , ▁wie ▁er ▁ist .
+D-912	-6.414572238922119	Ich kann ihm also zeigen, wie er ist.
+P-912	-20.3124 -0.9371 -1.6437 -2.0829 -0.2182 -0.4092 -1.0629 -0.3305 -0.1328 -1.1087 -0.1301 -0.1203
+T-374	Danke, Danny Kahneman.
+H-374	-7.276126384735107	▁Ho s en l änge , ▁B rei ten grad .
+D-374	-7.276126384735107	Hosenlänge, Breitengrad.
+P-374	-20.2883 -4.5731 -0.4104 -0.6262 -3.1191 -1.4965 -0.1925 -0.9751 -0.5178 -0.0517 -0.5387 -0.7655 -0.3501
+T-712	Ich wollte sie unterstützten.
+H-712	-7.4533586502075195	▁Ich ▁möchte ▁ein ▁Verständnis ▁dafür ▁haben .
+D-712	-7.4533586502075195	Ich möchte ein Verständnis dafür haben.
+P-712	-20.3049 -0.3240 -0.9174 -0.8411 -4.8261 -0.2242 -0.0496 -0.2264 -0.1410
+T-873	Und hier ist das Messer.
+H-873	-6.957932949066162	▁Ni m m t ▁man ▁den ▁D arm chi p ?
+D-873	-6.957932949066162	Nimmt man den Darmchip?
+P-873	-20.3153 -5.3567 -0.0929 -0.1255 -0.0598 -0.0344 -0.8019 -2.2395 -1.1242 -1.8753 -0.0161 -0.2349 -0.1459
+T-1310	Das wollen Sie nicht machen?
+H-1310	-6.407904148101807	▁Da r auf ▁wollen ▁Sie ▁nicht ▁ein gehen .
+D-1310	-6.407904148101807	Darauf wollen Sie nicht eingehen.
+P-1310	-20.3627 -3.3604 -0.3170 -0.0302 -0.5662 -0.1878 -0.1694 -1.6621 -0.0978 -0.1264 -0.1316
+T-19	Vielen Dank. (Applaus) Vielen Dank.
+H-19	-7.8530049324035645	▁Danke . ▁( Applaus )
+D-19	-7.8530049324035645	Danke. (Applaus)
+P-19	-20.3131 -0.7496 -0.4076 -3.4303 -0.1264 -0.0998 -0.1135
+T-907	Tut mir echt leid.
+H-907	-6.987998962402344	▁Ich ▁bin ▁verrückt , ▁dass ▁ich ▁daran ▁gearbeitet ▁habe .
+D-907	-6.987998962402344	Ich bin verrückt, dass ich daran gearbeitet habe.
+P-907	-20.2839 -0.1003 -0.0761 -3.5919 -0.2951 -0.8381 -0.2056 -4.2075 -1.0522 -0.1324 -0.1278 -0.1249
+T-607	Das ist ungeheuer wichtig.
+H-607	-6.644786357879639	▁Das ▁wird ▁wirklich ▁wichtig ▁sein .
+D-607	-6.644786357879639	Das wird wirklich wichtig sein.
+P-607	-20.3539 -1.2627 -0.0345 -0.4300 -0.7148 -0.1644 -0.0759 -0.1024
+T-377	Aber das hatte es nicht.
+H-377	-7.693909168243408	▁Aber ▁das ▁geschah .
+D-377	-7.693909168243408	Aber das geschah.
+P-377	-20.3487 -0.4299 -0.3110 -1.0595 -0.2629 -0.1323
+T-783	Also habe ich ihn unterbrochen.
+H-783	-6.229440689086914	▁Also ▁inter es s ierte ▁ich ▁an ▁dieser ▁Stelle .
+D-783	-6.229440689086914	Also interessierte ich an dieser Stelle.
+P-783	-20.3192 -0.4634 -1.3000 -0.2247 -0.0437 -0.3162 -0.0820 -2.0089 -2.0287 -0.4133 -0.3457 -0.1209
+T-800	Ich war völlig verwirrt.
+H-800	-6.282265663146973	▁BG : ▁Hu ber t us , ▁vielen ▁Dank .
+D-800	-6.282265663146973	BG: Hubertus, vielen Dank.
+P-800	-20.2949 -4.9775 -0.0308 -1.2417 -0.0257 -0.0822 -0.0010 -0.5619 -0.2523 -0.0163 -0.2339 -0.1831
+T-1102	Das ist das Spannende.
+H-1102	-6.78161096572876	▁Aber ▁das ▁hat ▁sie ▁nicht .
+D-1102	-6.78161096572876	Aber das hat sie nicht.
+P-1102	-20.3373 -0.1533 -0.9900 -0.0219 -1.5991 -0.2602 -0.1004 -0.1528
+T-1410	Vielen Dank.
+H-1410	-6.9709272384643555	▁Vielen ▁Dank . ▁( Applaus )
+D-1410	-6.9709272384643555	Vielen Dank. (Applaus)
+P-1410	-20.2828 -0.7247 -0.1051 -0.1374 -2.5572 -0.2587 -0.0936 -0.1147
+T-730	Ich sagte: "Hühnchen-Pellets?"
+H-730	-6.710469722747803	▁Es ▁ist ▁ein ▁P ick - and - R o ll .
+D-730	-6.710469722747803	Es ist ein Pick-and-Roll.
+P-730	-20.3123 -1.6558 -0.1626 -0.7710 -3.8207 -1.5770 -0.2171 -0.2087 -0.2534 -2.5191 -0.1532 -0.3033 -0.6149 -0.1220
+T-1273	Warum machen wir das?
+H-1273	-6.6683430671691895	▁Warum ▁tun ▁wir ▁das ?
+D-1273	-6.6683430671691895	Warum tun wir das?
+P-1273	-20.3387 -0.2697 -0.4770 -0.1089 -0.0709 -0.0459 -0.1216
+T-1223	Aber wissen Sie was?
+H-1223	-7.0289411544799805	▁Aber ▁wissen ▁Sie ▁was ?
+D-1223	-7.0289411544799805	Aber wissen Sie was?
+P-1223	-20.3214 -0.5536 -0.4882 -0.1488 -0.2435 -0.6904 -0.1457
+T-670	Was machst du nur?
+H-670	-7.6917724609375	▁Was ▁hält st ▁du ▁damit ?
+D-670	-7.6917724609375	Was hältst du damit?
+P-670	-20.2989 -0.7470 -3.2162 -0.0489 -0.2432 -1.9610 -0.1362 -0.1329
+T-91	BG: Danke. (Applaus)
+H-91	-8.314435005187988	▁Vielen ▁Dank .
+D-91	-8.314435005187988	Vielen Dank.
+P-91	-20.3106 -1.0814 -0.0633 -0.1369 -0.2458
+T-1116	Das war vor 16 Jahren.
+H-1116	-7.257928371429443	▁♫ ▁von ▁der ▁Welt ▁der ▁Web log s . ▁♫
+D-1116	-7.257928371429443	♫ von der Welt der Weblogs. ♫
+P-1116	-20.2964 -4.7905 -0.2162 -0.1178 -0.1840 -0.4864 -4.3138 -0.3523 -0.1363 -0.2457 -0.9988 -0.0965
+T-778	Er sagte: "Fisch?
+H-778	-5.257016658782959	▁Mi gue l : ▁Mi gue l ▁Go n cal ve s : ▁Mi gue l .
+D-778	-5.257016658782959	Miguel: Miguel Goncalves: Miguel.
+P-778	-20.2836 -4.5993 -0.4083 -0.1042 -2.8052 -0.0355 -0.0123 -0.0731 -1.0122 -0.1439 -0.0197 -0.0144 -0.1164 -0.5827 -0.0005 -0.0143 -0.0601 -0.3026 -0.1722
+T-698	Sie wollen die Welt ernähren?
+H-698	-7.066469192504883	▁Sehen ▁wir ▁uns ▁das ▁an .
+D-698	-7.066469192504883	Sehen wir uns das an.
+P-698	-20.3219 -0.9190 -0.7407 -0.1332 -1.5533 -0.1668 -0.5887 -0.1831
+T-1258	Und wissen Sie was?
+H-1258	-6.374419689178467	▁Und ▁würde st ▁du ▁wissen , ▁was ▁du ▁hast ?
+D-1258	-6.374419689178467	Und würdest du wissen, was du hast?
+P-1258	-20.2970 -2.4036 -2.0476 -0.4930 -0.1787 -0.1085 -0.2511 -0.0953 -0.8414 -1.2373 -0.1647 -0.1925
+T-1287	Und wissen Sie was?
+H-1287	-6.596527099609375	▁Und ▁wissen ▁Sie ▁was ?
+D-1287	-6.596527099609375	Und wissen Sie was?
+P-1287	-20.3010 -0.1440 -0.3187 -0.0969 -0.0727 -0.1527 -0.1159
+T-720	Was füttert ihr? "
+H-720	-7.430882453918457	▁CA : ▁Wie ▁he issen ▁Sie ?
+D-720	-7.430882453918457	CA: Wie heissen Sie?
+P-720	-20.2967 -2.6146 -0.0448 -1.6300 -1.9821 -0.9355 -0.1180 -0.0361 -0.1128
+T-350	CA: 60.000.
+H-350	-7.132368087768555	▁Das ▁ist ▁alles ▁geschützt er ▁Wald .
+D-350	-7.132368087768555	Das ist alles geschützter Wald.
+P-350	-20.2968 -2.4757 -1.3474 -1.0781 -0.9837 -0.0697 -0.1325 -0.1466 -0.1246
+T-1160	Vielen Dank. (Applaus)
+H-1160	-8.598849296569824	▁Vielen ▁Dank .
+D-1160	-8.598849296569824	Vielen Dank.
+P-1160	-20.2920 -1.8747 -0.0566 -0.1287 -0.2332
+T-90	Vielen, vielen Dank.
+H-90	-8.444276809692383	▁Danke . ▁( Applaus )
+D-90	-8.444276809692383	Danke. (Applaus)
+P-90	-20.2959 -0.8958 -0.5163 -5.0694 -0.1567 -0.0890 -0.1177
+T-975	Also sage ich, lasst die weltverändernden Spiele beginnen!
+H-975	-7.827889442443848	▁Das ▁ist ▁doch ▁so .
+D-975	-7.827889442443848	Das ist doch so.
+P-975	-20.3186 -1.4767 -0.0516 -1.4727 -1.6334 -0.0767 -0.1298
+T-976	Dankeschön. (Beifall)
+H-976	-8.886476516723633	▁S J : ▁Ja ,
+D-976	-8.886476516723633	SJ: Ja,
+P-976	-20.2921 -1.9369 -1.7573 -0.0407 -2.4511 -0.4531 -1.6308
+T-505	(Applaus)
+H-505	-7.6404571533203125	▁( Er st au nen )
+D-505	-7.6404571533203125	(Erstaunen)
+P-505	-20.2696 -0.3489 -5.6828 -0.0220 -0.0135 -0.0192 -0.1167 -0.1328
+T-1079	Also ist er logisch.
+H-1079	-7.509523868560791	▁( Er st au nen )
+D-1079	-7.509523868560791	(Erstaunen)
+P-1079	-20.2594 -0.2706 -5.3176 -0.0185 -0.0134 -0.0187 -0.1163 -0.1353
+T-1353	(Beifall)
+H-1353	-7.5878729820251465	▁( Er st au nen )
+D-1353	-7.5878729820251465	(Erstaunen)
+P-1353	-20.2671 -0.2537 -5.6014 -0.0199 -0.0149 -0.0165 -0.1147 -0.1343

@@ -45,6 +45,11 @@ class SpeechToTextTask(LegacyFairseqTask):
             help="max number of tokens in the target sequence",
         )
 
+        parser.add_argument(
+            '--mt-mode',
+            action='store_true'
+        )
+
     def __init__(self, args, tgt_dict):
         super().__init__(args)
         self.tgt_dict = tgt_dict
@@ -90,6 +95,7 @@ class SpeechToTextTask(LegacyFairseqTask):
             is_train_split=is_train_split,
             epoch=epoch,
             seed=self.args.seed,
+            mt_mode=self.args.mt_mode
         )
 
     @property

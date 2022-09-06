@@ -110,10 +110,10 @@ def process(args):
             train_text.extend(manifest["src_text"])
         df = pd.DataFrame.from_dict(manifest)
         df = filter_manifest_df(df, is_train_split=is_train_split, min_n_frames=1000, max_n_frames=480000)
-        save_df_to_tsv(df, op.join(args.data_root, f"{split}_st.tsv"))
+        save_df_to_tsv(df, op.join(args.data_root, f"{split}_st_{lang}.tsv"))
 
     v_size_str = "" if args.vocab_type == "char" else str(args.vocab_size)
-    spm_filename_prefix = f"spm_{args.vocab_type}{v_size_str}_st"
+    spm_filename_prefix = f"spm_{args.vocab_type}{v_size_str}_st_{lang}"
     with NamedTemporaryFile(mode="w") as f:
         for t in train_text:
             f.write(t + "\n")
@@ -129,7 +129,7 @@ def process(args):
     gen_config_yaml(
         args.data_root,
         spm_filename_prefix + ".model",
-        yaml_filename=f"config_st.yaml",
+        yaml_filename=f"config_st_{lang}.yaml",
         prepend_tgt_lang_tag=True,
         prepend_src_lang_tag=True
     )

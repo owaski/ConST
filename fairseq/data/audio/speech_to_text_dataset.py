@@ -50,6 +50,11 @@ class S2TDataConfig(object):
         return self.config.get("vocab_filename", "dict.txt")
 
     @property
+    def phoneme_vocab_filename(self):
+        """fairseq vocabulary file under data root"""
+        return self.config.get("phoneme_vocab_filename", None)
+
+    @property
     def shuffle(self) -> bool:
         """Shuffle dataset samples before batching"""
         return self.config.get("shuffle", False)
@@ -246,6 +251,7 @@ class SpeechToTextDataset(FairseqDataset):
         tgt_dict: Optional[Dictionary] = None,
         pre_tokenizer=None,
         bpe_tokenizer=None,
+        mt_mode=False
     ):
         self.split, self.is_train_split = split, is_train_split
         self.data_cfg = data_cfg
@@ -258,9 +264,9 @@ class SpeechToTextDataset(FairseqDataset):
         assert src_langs is None or len(src_langs) == self.n_samples
         assert tgt_langs is None or len(tgt_langs) == self.n_samples
         assert ids is None or len(ids) == self.n_samples
-        assert (tgt_dict is None and tgt_texts is None) or (
-            tgt_dict is not None and tgt_texts is not None
-        )
+        # assert (tgt_dict is None and tgt_texts is None) or (
+        #     tgt_dict is not None and tgt_texts is not None
+        # )
         self.src_texts, self.tgt_texts = src_texts, tgt_texts
         self.src_langs, self.tgt_langs = src_langs, tgt_langs
         self.tgt_dict = tgt_dict
@@ -274,6 +280,8 @@ class SpeechToTextDataset(FairseqDataset):
 
         self.pre_tokenizer = pre_tokenizer
         self.bpe_tokenizer = bpe_tokenizer
+
+        self.mt_mode = mt_mode
 
         logger.info(self.__repr__())
 
@@ -291,7 +299,7 @@ class SpeechToTextDataset(FairseqDataset):
         return re.match(pattern, token)
 
     def check_tgt_lang_tag(self):
-        if self.data_cfg.prepend_tgt_lang_tag:
+        if self.data_cfg.prepend_tgt_lang_tag and self.tgt_langs is not None:
             assert self.tgt_langs is not None and self.tgt_dict is not None
             tgt_lang_tags = [
                 self.LANG_TAG_TEMPLATE.format(t) for t in set(self.tgt_langs)
@@ -308,16 +316,28 @@ class SpeechToTextDataset(FairseqDataset):
     def __getitem__(
         self, index: int
     ) -> Tuple[int, torch.Tensor, Optional[torch.Tensor]]:
-        source = get_features_or_waveform(
-            self.audio_paths[index], need_waveform=self.data_cfg.use_audio_input
-        )
-        if self.feature_transforms is not None:
-            assert not self.data_cfg.use_audio_input
-            source = self.feature_transforms(source)
-        if isinstance(source, np.ndarray):
-            source = torch.from_numpy(source).float()
-        if self.data_cfg.use_audio_input:
-            source = source.squeeze(0)
+
+        if not self.mt_mode:
+            source = get_features_or_waveform(
+                self.audio_paths[index], need_waveform=self.data_cfg.use_audio_input
+            )
+            if self.feature_transforms is not None:
+                assert not self.data_cfg.use_audio_input
+                source = self.feature_transforms(source)
+            if isinstance(source, np.ndarray):
+                source = torch.from_numpy(source).float()
+            if self.data_cfg.use_audio_input:
+                source = source.squeeze(0)
+        else:
+            tokenized = self.tokenize_text(self.src_texts[index])
+            src_text = self.tgt_dict.encode_line(
+                tokenized, add_if_not_exist=False, append_eos=True
+            ).long()
+            if self.data_cfg.prepend_src_lang_tag:
+                lang_tag = self.LANG_TAG_TEMPLATE.format(self.src_langs[index])
+                lang_tag_idx = self.tgt_dict.index(lang_tag)
+                src_text = torch.cat((torch.LongTensor([lang_tag_idx]), src_text), 0)
+            source = src_text
 
         target = None
         if self.tgt_texts is not None:
@@ -339,12 +359,26 @@ class SpeechToTextDataset(FairseqDataset):
         if len(samples) == 0:
             return {}
         indices = torch.tensor([i for i, _, _ in samples], dtype=torch.long)
-        frames = _collate_frames(
-            [s for _, s, _ in samples], self.data_cfg.use_audio_input
-        )
-        # sort samples by descending number of frames
-        n_frames = torch.tensor([s.size(0) for _, s, _ in samples], dtype=torch.long)
+        
+        if not self.mt_mode:
+            frames = _collate_frames(
+                [s for _, s, _ in samples], self.data_cfg.use_audio_input
+            )
+            # sort samples by descending number of frames
+            n_frames = torch.tensor([s.size(0) for _, s, _ in samples], dtype=torch.long)
+        else:
+            frames = fairseq_data_utils.collate_tokens(
+                [s for _, s, _  in samples],
+                self.tgt_dict.pad(), self.tgt_dict.eos(),
+                left_pad=False,
+                move_eos_to_beginning=False,
+            )
+            n_frames = torch.tensor(
+                [s.size(0) for _, s, _ in samples], dtype=torch.long
+            )
+        
         n_frames, order = n_frames.sort(descending=True)
+
         indices = indices.index_select(0, order)
         frames = frames.index_select(0, order)
 
@@ -438,6 +472,7 @@ class SpeechToTextDatasetCreator(object):
         tgt_dict,
         pre_tokenizer,
         bpe_tokenizer,
+        mt_mode
     ) -> SpeechToTextDataset:
         audio_paths, n_frames, src_texts, tgt_texts, ids = [], [], [], [], []
         speakers, src_langs, tgt_langs = [], [], []
@@ -469,6 +504,7 @@ class SpeechToTextDatasetCreator(object):
             tgt_dict,
             pre_tokenizer,
             bpe_tokenizer,
+            mt_mode,
         )
 
     @classmethod
@@ -501,6 +537,7 @@ class SpeechToTextDatasetCreator(object):
         is_train_split: bool,
         epoch: int,
         seed: int,
+        mt_mode: bool
     ) -> SpeechToTextDataset:
         samples = []
         _splits = splits.split(",")
@@ -529,6 +566,7 @@ class SpeechToTextDatasetCreator(object):
                 tgt_dict,
                 pre_tokenizer,
                 bpe_tokenizer,
+                mt_mode,
             )
             for name, s in zip(_splits, samples)
         ]

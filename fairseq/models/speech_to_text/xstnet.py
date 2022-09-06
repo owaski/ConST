@@ -17,7 +17,7 @@ from fairseq.models import (
     register_model_architecture,
 )
 from fairseq.models.fairseq_encoder import EncoderOut
-from fairseq.models.transformer import Embedding
+from fairseq.models.transformer import Embedding, Linear
 from fairseq.modules import (
     FairseqDropout,
     LayerNorm,
@@ -45,6 +45,7 @@ class XSTNet(FairseqEncoderDecoderModel):
         S2TTransformerModelW2V2.add_args(parser)
         parser.add_argument("--textual-encoder-embed-dim", type=int, metavar="N",
                             help="encoder embded dim for text input")
+        parser.add_argument("--no-subsample-audio", action='store_true')
 
     @classmethod
     def build_encoder(cls, args, dict, embed_tokens):
@@ -81,7 +82,7 @@ class XSTNet(FairseqEncoderDecoderModel):
         # make sure all arguments are present in older models
         base_architecture(args)
         decoder_embed_tokens = cls.build_embedding(args, task.target_dictionary, args.decoder_embed_dim)
-        encoder = cls.build_encoder(args, task.target_dictionary, decoder_embed_tokens)
+        encoder = cls.build_encoder(args, task.source_dictionary, decoder_embed_tokens)
         decoder = cls.build_decoder(args, task.target_dictionary, decoder_embed_tokens)
         return cls(encoder, decoder)
 
@@ -141,6 +142,13 @@ class XSTNetEncoder(FairseqEncoder):
                     bias=False,
                 )
                 self.ctc_projection.weight = embed_tokens.weight
+            elif getattr(args, "ablation_type", False) == "ctc_phoneme":
+                self.ctc_type = "ctc_phoneme"
+                self.ctc_projection = nn.Linear(
+                    self.w2v_args.encoder_embed_dim,
+                    len(dictionary),
+                    bias=False
+                )
             elif (getattr(args, "ablation_type", False) == "ctc_w2v") or \
                     (getattr(args, "ctc_type", False) == "ctc_w2v"):
                 self.ctc_type = "ctc_w2v"
@@ -177,12 +185,16 @@ class XSTNetEncoder(FairseqEncoder):
         self.freeze_w2v = args.freeze_w2v
 
         w2v_output_dim = self.w2v_args.encoder_embed_dim
-        self.subsample_audio = Conv1dSubsampler(
-            w2v_output_dim,
-            args.conv_channels,
-            self.textual_encoder_embed_dim,
-            [int(k) for k in args.conv_kernel_sizes.split(",")],
-        )
+        self.no_subsample_audio = args.no_subsample_audio
+        if not args.no_subsample_audio:
+            self.subsample_audio = Conv1dSubsampler(
+                w2v_output_dim,
+                args.conv_channels,
+                self.textual_encoder_embed_dim,
+                [int(k) for k in args.conv_kernel_sizes.split(",")],
+            )
+        else:
+            self.w2v_output_proj = Linear(w2v_output_dim, self.textual_encoder_embed_dim)
 
     def _build_textual_encoder(self, args):
         self.max_source_positions = args.max_source_positions
@@ -262,7 +274,11 @@ class XSTNetEncoder(FairseqEncoder):
             w2v_feature, encoder_padding_mask, input_lengths = self._get_w2v_feature(
                 src_tokens, src_lengths)
 
-        x, input_lengths = self.subsample_audio(w2v_feature, input_lengths)
+        if not self.no_subsample_audio:
+            x, input_lengths = self.subsample_audio(w2v_feature, input_lengths)
+        else:
+            x = self.w2v_output_proj(w2v_feature).transpose(0, 1)
+
         x = self.embed_scale * x
         encoder_padding_mask = lengths_to_padding_mask(input_lengths)
         if self.embed_positions is not None:
@@ -291,7 +307,7 @@ class XSTNetEncoder(FairseqEncoder):
         src_lengths: b-dim LongTensor
         """
         short_audio_len = None
-        if self.is_text_input:
+        if self.is_text_input or not src_tokens.dtype.is_floating_point:
             is_text_input = True
         if is_text_input:
             x, encoder_padding_mask = self.embedding_text(src_tokens, src_lengths)
@@ -358,10 +374,18 @@ class XSTNetEncoder(FairseqEncoder):
             encoder_state = encoder_state.transpose(0, 1) # b x seq x 512
             encoder_state = self.embed_scale * encoder_state
             encoder_padding_mask = lengths_to_padding_mask(input_lengths)
+        elif self.ctc_type == "ctc_phoneme":
+            encoder_state = w2v_feature
         else:
-            assert self.ctc_type == "ctc_w2v", "ctc type should be ctc_w2v or ctc_cnn"
+            assert self.ctc_type == "ctc_w2v", "ctc type should be ctc_w2v or ctc_cnn or ctc_phoneme"
         encoder_state = self.dropout_module(encoder_state)
-        ctc_logit = self.ctc_projection(encoder_state) # b x seq x voc
+
+        # ctc_logit = self.ctc_projection(encoder_state) # b x seq x voc
+        if self.ctc_type == "ctc_cnn":
+            ctc_logit = torch.matmul(encoder_state, self.embed_tokens.weight.T.detach())
+        elif self.ctc_type == "ctc_phoneme":
+            ctc_logit = self.ctc_projection(encoder_state)
+
         logits = ctc_logit.float()
         log_probs = nn.functional.log_softmax(logits, dim=-1)
         log_probs = log_probs.transpose(0, 1) # seq x b x voc
@@ -376,6 +400,7 @@ def base_architecture(args):
     args.use_asr_finetune_w2v = getattr(args, "use_asr_finetune_w2v", False)
 
     # Convolutional subsampler
+    args.no_subsample_audio = getattr(args, "no_subsample_audio", False)
     args.conv_kernel_sizes = getattr(args, "conv_kernel_sizes", "5,5")
     args.conv_channels = getattr(args, "conv_channels", 1024)
     # Transformer

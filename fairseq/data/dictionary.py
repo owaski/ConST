@@ -6,6 +6,7 @@
 import os
 from collections import Counter
 from multiprocessing import Pool
+from typing import Dict
 
 import torch
 from fairseq import utils
@@ -366,6 +367,15 @@ class Dictionary(object):
                     filename, tokenize, dict.eos_word
                 )
             )
+
+
+class PhonemeDictionary(Dictionary):
+    def __init__(self):
+        self.bos_word, self.unk_word, self.pad_word, self.eos_word = None, None, None, None
+        self.symbols = []
+        self.count = []
+        self.indices = {}
+        self.nspecial = len(self.symbols)
 
 
 class TruncatedDictionary(object):

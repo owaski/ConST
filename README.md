@@ -70,6 +70,16 @@ pip3 install --editable ./
 ```
 
 ### 📉 Pre-processing and Training
+
+
+Prepare LibriSpeech
+```bash
+python ConST/prepare_data/prep_librispeech_data.py --output-root /mnt/data/siqiouyang/datasets/librispeech
+
+ln -s /mnt/data/siqiouyang/datasets/librispeech/LibriSpeech /mnt/data/siqiouyang/datasets/must-c-v1.0/LibriSpeech
+cp /mnt/data/siqiouyang/datasets/librispeech/*.tsv /mnt/data/siqiouyang/datasets/must-c-v1.0
+```
+
 The instructions of data pre-processing are [here](ConST/prepare_data/README.md).
 To train the model, take En-De as an example, you may run:
 ```bash
@@ -82,6 +92,9 @@ We strongly recommend that you average the checkpoints after you get the best ch
 python3 ConST/scripts/average_checkpoints.py --inputs checkpoint/model_saved \
 --num-update-checkpoints 10 --checkpoint-upper-bound ${step-to-get-the-best-dev} \
 --output ${path-to-averaged-ckpt}
+
+python3 ConST/scripts/average_best_checkpoints.py --input /mnt/data/siqiouyang/runs/ConST/main_enes_token \
+--output /mnt/data/siqiouyang/runs/ConST/main_enes_token/checkpoint_avg.pt
 ```
 Then generate and evaluate your model.
 ```bash
@@ -89,6 +102,13 @@ fairseq-generate data/ --gen-subset tst-COMMON_st --task speech_to_text --prefix
 --max-tokens 4000000 --max-source-positions 4000000 --beam 10 \
 --config-yaml config_st.yaml  --path ${path-to-averaged-ckpt} \
 --scoring sacrebleu
+
+CUDA_VISIBLE_DEVICES=7 fairseq-generate /mnt/data/siqiouyang/datasets/must-c-v1.0/ --gen-subset tst-COMMON_st_de --task speech_to_text --prefix-size 1 \
+--max-tokens 4000000 --max-source-positions 4000000 --beam 10 --lenpen 0.6 --scoring sacrebleu \
+--config-yaml config_st_de.yaml  --path /mnt/data/siqiouyang/runs/ConST/ablation_pretrain_sent_1348h_ft_10h/checkpoint_best.pt \
+--results-path /home/siqiouyang/work/projects/ConST/ConST/analysis/generation/ablation_pretrain_ctc_phoneme_100h_ft_10h \
+--mt-mode 
+
 ```
 
 ## ✏️ Citation
