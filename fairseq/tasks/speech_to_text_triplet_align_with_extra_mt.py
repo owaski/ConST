@@ -57,6 +57,8 @@ class SpeechToTextTripletAlignWithExtraMTTask(LegacyFairseqTask):
         parser.add_argument("--text-data-sample-ratio", default=1.0, type=float,
                             help="define MT data sample ratio in one batch")
 
+        parser.add_argument("--use-pretrained-mfa", action='store_true')
+
         # options for reporting BLEU during validation
         parser.add_argument('--eval-bleu', action='store_true',
                             help='evaluation with BLEU scores')
@@ -81,6 +83,8 @@ class SpeechToTextTripletAlignWithExtraMTTask(LegacyFairseqTask):
                             help='args for building the bpe, if needed')
         parser.add_argument('--eval-bleu-bpe-path', type=str, metavar='BPE',
                             help='args for building the bpe, if needed')
+        parser.add_argument('--unidirectional', action="store_true", default=False,
+                            help="unidirectional encoder")
 
     def __init__(self, args, src_dict, tgt_dict):
         super().__init__(args)
@@ -166,7 +170,8 @@ class SpeechToTextTripletAlignWithExtraMTTask(LegacyFairseqTask):
             bpe_tokenizer,
             is_train_split=is_train_split,
             epoch=epoch,
-            seed=self.args.seed
+            seed=self.args.seed,
+            use_pretrained_mfa=self.args.use_pretrained_mfa
         )
         text_dataset = None
         if self.args.external_parallel_mt_data is not None and is_train_split:

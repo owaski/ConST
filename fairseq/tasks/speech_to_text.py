@@ -50,6 +50,11 @@ class SpeechToTextTask(LegacyFairseqTask):
             action='store_true'
         )
 
+        parser.add_argument(
+            '--asr-mode',
+            action='store_true'
+        )
+
     def __init__(self, args, tgt_dict):
         super().__init__(args)
         self.tgt_dict = tgt_dict
@@ -95,7 +100,8 @@ class SpeechToTextTask(LegacyFairseqTask):
             is_train_split=is_train_split,
             epoch=epoch,
             seed=self.args.seed,
-            mt_mode=self.args.mt_mode
+            mt_mode=self.args.mt_mode,
+            asr_mode=self.args.asr_mode,
         )
 
     @property

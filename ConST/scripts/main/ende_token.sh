@@ -9,7 +9,7 @@ MODEL_DIR=/mnt/data/siqiouyang/runs/ConST/$tag
 mkdir -p ${MODEL_DIR}
 cp /mnt/data/siqiouyang/runs/ConST/pretrained/$pretrain_ckpt /mnt/data/siqiouyang/runs/ConST/$tag/checkpoint_last.pt
 
-export num_gpus=4
+export num_gpus=2
 
 fairseq-train /mnt/data/siqiouyang/datasets/must-c-v1.0 \
     --distributed-world-size $num_gpus \
@@ -43,5 +43,5 @@ fairseq-train /mnt/data/siqiouyang/datasets/must-c-v1.0 \
     --eval-bleu-bpe sentencepiece --eval-bleu-bpe-path /mnt/data/siqiouyang/datasets/must-c-v1.0/spm_unigram10000_st.model \
     --best-checkpoint-metric bleu --maximize-best-checkpoint-metric \
     \
-    --reset-optimizer --reset-dataloader
+    --use-pretrained-mfa --reset-optimizer --reset-dataloader
     # --external-parallel-mt-data extra_mt/bin/ --text-data-sample-ratio 0.25

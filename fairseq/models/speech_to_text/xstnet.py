@@ -46,6 +46,7 @@ class XSTNet(FairseqEncoderDecoderModel):
         parser.add_argument("--textual-encoder-embed-dim", type=int, metavar="N",
                             help="encoder embded dim for text input")
         parser.add_argument("--no-subsample-audio", action='store_true')
+        parser.add_argument("--no-audio-pretrain", action='store_true')
 
     @classmethod
     def build_encoder(cls, args, dict, embed_tokens):
@@ -172,7 +173,8 @@ class XSTNetEncoder(FairseqEncoder):
         if not self.use_asr_finetune_w2v:  # if use ssl-trained only
             self.w2v_args = ckpt["args"]
             self.wav2vec_model = Wav2Vec2Model.build_model(ckpt['args'], task=None)
-            self.wav2vec_model.load_state_dict(ckpt['model'])
+            if not getattr(args, "no_audio_pretrain", False):
+                self.wav2vec_model.load_state_dict(ckpt['model'])
         else:  # wav2vec-ctc model
             ckpt["args"].data = args.data
             if not os.path.exists(os.path.join(ckpt["args"].data, f"dict.{ckpt['args'].labels}.txt")):

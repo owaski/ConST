@@ -107,7 +107,7 @@ def _main(cfg: DictConfig, output_file):
     task.load_dataset(cfg.dataset.gen_subset, task_cfg=saved_cfg.task)
 
     if cfg.generation.lm_path is not None:
-        overrides["data"] = cfg.task.data
+        overrides["data"] = cfg.task.data1
 
         try:
             lms, _ = checkpoint_utils.load_model_ensemble(

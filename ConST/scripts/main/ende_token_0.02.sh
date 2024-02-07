@@ -43,5 +43,5 @@ fairseq-train /mnt/data/siqiouyang/datasets/must-c-v1.0 \
     --eval-bleu-bpe sentencepiece --eval-bleu-bpe-path /mnt/data/siqiouyang/datasets/must-c-v1.0/spm_unigram10000_st.model \
     --best-checkpoint-metric bleu --maximize-best-checkpoint-metric \
     \
-    --all-gather-list-size 32768 --reset-optimizer --reset-dataloader
+    --all-gather-list-size 32768 --use-pretrained-mfa --reset-optimizer --reset-dataloader 
     # --external-parallel-mt-data extra_mt/bin/ --text-data-sample-ratio 0.25

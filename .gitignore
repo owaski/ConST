@@ -156,3 +156,10 @@ cs291k/analysis/*
 events.out.tfevents.*
 *.pdf
 .vscode/launch.json
+generate-tst-COMMON*
+generate-train*
+stdout*
+stderr*
+profiler*
+generate_std*
+runs/

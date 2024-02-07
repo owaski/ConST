@@ -93,8 +93,8 @@ python3 ConST/scripts/average_checkpoints.py --inputs checkpoint/model_saved \
 --num-update-checkpoints 10 --checkpoint-upper-bound ${step-to-get-the-best-dev} \
 --output ${path-to-averaged-ckpt}
 
-python3 ConST/scripts/average_best_checkpoints.py --input /mnt/data/siqiouyang/runs/ConST/main_enes_token \
---output /mnt/data/siqiouyang/runs/ConST/main_enes_token/checkpoint_avg.pt
+python3 ConST/scripts/average_best_checkpoints.py --input /mnt/data/siqiouyang/runs/ConST/main_ende_token_weight_1.5  \
+--output /mnt/data/siqiouyang/runs/ConST/main_ende_token_weight_1.5/checkpoint_avg.pt
 ```
 Then generate and evaluate your model.
 ```bash
@@ -103,12 +103,24 @@ fairseq-generate data/ --gen-subset tst-COMMON_st --task speech_to_text --prefix
 --config-yaml config_st.yaml  --path ${path-to-averaged-ckpt} \
 --scoring sacrebleu
 
-CUDA_VISIBLE_DEVICES=7 fairseq-generate /mnt/data/siqiouyang/datasets/must-c-v1.0/ --gen-subset tst-COMMON_st_de --task speech_to_text --prefix-size 1 \
---max-tokens 4000000 --max-source-positions 4000000 --beam 10 --lenpen 0.6 --scoring sacrebleu \
---config-yaml config_st_de.yaml  --path /mnt/data/siqiouyang/runs/ConST/ablation_pretrain_sent_1348h_ft_10h/checkpoint_best.pt \
---results-path /home/siqiouyang/work/projects/ConST/ConST/analysis/generation/ablation_pretrain_ctc_phoneme_100h_ft_10h \
+CUDA_VISIBLE_DEVICES=0 python fairseq_cli/generate.py /mnt/data/siqiouyang/datasets/must-c-v1.0/ --gen-subset tst-COMMON_st_de --task speech_to_text \
+--prefix-size 1 --max-tokens 4000000 --max-source-positions 4000000 --beam 10 --lenpen 0.6 --scoring sacrebleu \
+--config-yaml config_st_de.yaml  --path /mnt/data/siqiouyang/runs/ConST/ablation_pretrain_token_mfat_noaudiopretrain_t0.20_ft_10h/checkpoint_best.pt \
+--results-path /home/siqiouyang/work/projects/ConST/ConST/analysis/generation/cascade_0.1mt/ \
 --mt-mode 
 
+CUDA_VISIBLE_DEVICES=0 python fairseq_cli/generate.py /mnt/data/siqiouyang/datasets/must-c-v1.0/ --gen-subset test_st_mt_en --task speech_to_text_nllb \
+--prefix-size 1 --max-tokens 4000000 --max-source-positions 4000000 --beam 10 --lenpen 0.3 --scoring sacrebleu \
+--config-yaml config_st_mt_en.yaml --path /mnt/data7/siqiouyang/runs/ConST/mt_en_base/checkpoint_best.pt \
+--mt-mode 
+
+CUDA_VISIBLE_DEVICES=6 python fairseq_cli/generate.py /mnt/data/siqiouyang/datasets/must-c-v1.0/ --gen-subset tst-COMMON_st_de_cascade_370h_noaudiopretrain --task speech_to_text \
+--prefix-size 1 --max-tokens 4000000 --max-source-positions 4000000 --beam 10 --lenpen 0.6 --scoring sacrebleu \
+--config-yaml config_st_de.yaml  --path /mnt/data/siqiouyang/runs/ConST/pretrained/wmt16_ende_xstnet_pretrain.pt --mt-mode
+
+CUDA_VISIBLE_DEVICES=0 python fairseq_cli/generate.py /mnt/data/siqiouyang/datasets/must-c-v1.0/ --gen-subset tst-COMMON_st_de --task speech_to_text \
+--prefix-size 1 --max-tokens 4000000 --max-source-positions 4000000 --beam 10 --lenpen 0.6 --scoring wer --asr-mode \
+--config-yaml config_st_de.yaml  --path /mnt/data/siqiouyang/runs/ConST/ablation_pretrain_token_mfat_10h_t0.20_ft_1h/checkpoint_best.pt
 ```
 
 ## ✏️ Citation

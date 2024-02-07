@@ -30,12 +30,13 @@ fairseq-train /mnt/data/siqiouyang/datasets/must-c-v1.0 \
     --label-smoothing 0.1 --ignore-prefix-size 1 --report-accuracy \
     --ablation-type ctc_cnn --ablation-weight 0.3 \
     \
-    --update-freq $(expr 16 / $num_gpus) --max-update 500000 \
+    --update-freq $(expr 16 / $num_gpus) --max-update 5000000 \
     \
     --tensorboard-logdir tensorboard_logs/$tag --log-interval 100 \
     --save-interval-updates 1000 --save-interval 1 \
     --keep-last-epochs 1 --keep-interval-updates 1 --keep-best-checkpoints 1 \
     --save-dir ${MODEL_DIR} \
     --ddp-backend=no_c10d \
-    --reset-optimizer --reset-dataloader --all-gather-list-size 32768 \
-    --best-checkpoint-metric contrastive_loss
+    --all-gather-list-size 32768 \
+    --best-checkpoint-metric contrastive_loss \
+    --reset-optimizer --reset-dataloader 

@@ -295,6 +295,7 @@ class SpeechTextTripleAlignDatasetCreator(SpeechToTextDatasetCreator):
             tgt_dict,
             pre_tokenizer,
             bpe_tokenizer,
+            use_pretrained_mfa,
     ) -> SpeechTextTripleAlignDataset:
         is_asr = 'asr' in split_name
         audio_paths, n_frames, src_texts, tgt_texts, ids = [], [], [], [], []
@@ -329,7 +330,8 @@ class SpeechTextTripleAlignDatasetCreator(SpeechToTextDatasetCreator):
                     [os.path.join(
                         data_cfg.audio_root, 
                         '{}-{}'.format(ss[cls.KEY_SRC_LANG], ss[cls.KEY_TGT_LANG]), 
-                        'data/{}/align_mfat'.format(subdir), 
+                        'data', subdir,
+                        'align' if use_pretrained_mfa else 'align_mfat',
                         ss[cls.KEY_ID] + '.pt'
                     ) for ss in s]
                 )
@@ -383,6 +385,7 @@ class SpeechTextTripleAlignDatasetCreator(SpeechToTextDatasetCreator):
             is_train_split: bool,
             epoch: int,
             seed: int,
+            use_pretrained_mfa: bool
     ) -> SpeechTextTripleAlignDataset:
         samples = []
         _splits = splits.split(",")
@@ -407,6 +410,7 @@ class SpeechTextTripleAlignDatasetCreator(SpeechToTextDatasetCreator):
                 tgt_dict,
                 pre_tokenizer,
                 bpe_tokenizer,
+                use_pretrained_mfa
             )
             for name, s in zip(_splits, samples)
         ]

@@ -24,11 +24,13 @@ class LabelSmoothedCrossEntropyWithContrastiveTokenCriterion(LabelSmoothedCrossE
         ignore_prefix_size=0,
         report_accuracy=False,
         contrastive_level='token',
+        pooling='mean',
         cross_attention_num=10,
         ablation_type='ctc_cnn',
         ablation_weight=0.,
         use_dual_ctr=False,
         ctr_dropout_rate=0.0,
+        enable_profiler=False,
     ):
         super().__init__(task, sentence_avg, label_smoothing, ignore_prefix_size, report_accuracy)
         self.sentence_avg = sentence_avg
@@ -44,6 +46,9 @@ class LabelSmoothedCrossEntropyWithContrastiveTokenCriterion(LabelSmoothedCrossE
 
         self.contrastive_level = contrastive_level
         self.cross_attention_num = cross_attention_num
+        self.pooling = pooling
+
+        self.enable_profiler = enable_profiler
 
 
     @staticmethod
@@ -56,6 +61,7 @@ class LabelSmoothedCrossEntropyWithContrastiveTokenCriterion(LabelSmoothedCrossE
                             help='which type of length to times to the contrastive loss')
         parser.add_argument('--contrastive-level', type=str, default="",
                             help='contrastive level, token/sentence/cross_attention')
+        parser.add_argument('--pooling', type=str, default='mean')
 
         parser.add_argument('--cross-attention-num', type=int, default=10)
 
@@ -66,6 +72,9 @@ class LabelSmoothedCrossEntropyWithContrastiveTokenCriterion(LabelSmoothedCrossE
                             help="if we want to use dual contrastive loss")
         parser.add_argument("--ctr-dropout-rate", default=0., type=float,
                             help='the dropout rate of hidden units')
+
+        
+        parser.add_argument('--enable-profiler', action='store_true', default=False)
 
 
     def forward(self, model, sample, reduce=True):
@@ -138,36 +147,58 @@ class LabelSmoothedCrossEntropyWithContrastiveTokenCriterion(LabelSmoothedCrossE
         loss = torch.tensor(0.)
         sample_size = 0
 
-        static_model = self.task.static_model
+        static_model = getattr(self.task, "static_model", None)
 
         if sample["align_indices"].size(0) > 0:
 
 
             if self.contrastive_level == 'sentence':
-                s_encoder_out = model.encoder(
+
+                def _obtain_sent_feature():
+                    s_encoder_out = model.encoder(
                     sample["align_input"]["src_tokens"], sample["align_input"]["src_lengths"]
-                )
-                with torch.no_grad():
-                    t_encoder_out = model.encoder(
-                        sample["align_input"]["src_text"], sample["align_input"]["src_text_lengths"]
                     )
-                audio_seq_hidden = self.get_sequence_hidden(model, sample, s_encoder_out, layer) # B x h
-                text_seq_hidden = self.get_sequence_hidden(model, sample, t_encoder_out, layer) # B x h
-                batch_size, hidden_size = audio_seq_hidden.size()
-                logits = F.cosine_similarity(audio_seq_hidden.expand((batch_size, batch_size, hidden_size)),
-                                            text_seq_hidden.expand((batch_size, batch_size, hidden_size)).transpose(0, 1),
-                                            dim=-1)
-                logits /= temp
+                    with torch.no_grad():
+                        t_encoder_out = model.encoder(
+                            sample["align_input"]["src_text"], sample["align_input"]["src_text_lengths"]
+                        )
+                    return s_encoder_out, t_encoder_out
+                
+                def _compute_sent_loss(s_encoder_out, t_encoder_out):
+                    audio_seq_hidden = self.get_sequence_hidden(model, sample, s_encoder_out, layer) # B x h
+                    text_seq_hidden = self.get_sequence_hidden(model, sample, t_encoder_out, layer) # B x h
+                    batch_size, hidden_size = audio_seq_hidden.size()
+                    logits = F.cosine_similarity(audio_seq_hidden.expand((batch_size, batch_size, hidden_size)),
+                                                text_seq_hidden.expand((batch_size, batch_size, hidden_size)).transpose(0, 1),
+                                                dim=-1)
+                    logits /= temp
 
-                if self.use_dual_ctr:
-                    loss_audio = -torch.nn.LogSoftmax(0)(logits).diag()
-                    loss_text = -torch.nn.LogSoftmax(1)(logits).diag()
-                    loss = loss_audio + loss_text
+                    if self.use_dual_ctr:
+                        loss_audio = -torch.nn.LogSoftmax(0)(logits).diag()
+                        loss_text = -torch.nn.LogSoftmax(1)(logits).diag()
+                        loss = loss_audio + loss_text
+                    else:
+                        loss = -torch.nn.LogSoftmax(0)(logits).diag()
+
+                    sample_size = batch_size
+
+                    return loss, sample_size
+
+                if self.enable_profiler:
+                    import time
+                    start_time = time.time()
+                    s_encoder_out, t_encoder_out = _obtain_sent_feature()
+                    torch.cuda.synchronize()
+                    mid_time = time.time()
+                    loss, sample_size = _compute_sent_loss(s_encoder_out, t_encoder_out)
+                    torch.cuda.synchronize()
+                    end_time = time.time()
+                    print('feature: {:.2f}ms, loss: {:.2f}ms, loss_ratio: {:.2f}'.format(
+                        (mid_time - start_time) * 1000, (end_time - mid_time) * 1000, (end_time - mid_time) / (end_time - start_time)))
                 else:
-                    loss = -torch.nn.LogSoftmax(0)(logits).diag()
-
-                sample_size = batch_size
-
+                    s_encoder_out, t_encoder_out = _obtain_sent_feature()
+                    loss, sample_size = _compute_sent_loss(s_encoder_out, t_encoder_out)    
+                
             elif self.contrastive_level == 'cross_attention':
 
                 s_encoder_out = model.encoder(
@@ -430,67 +461,98 @@ class LabelSmoothedCrossEntropyWithContrastiveTokenCriterion(LabelSmoothedCrossE
                 sample_size = batch_size
 
             elif self.contrastive_level == 'token':
-                s_encoder_out = model.encoder(
-                    sample["align_input"]["src_tokens"], sample["align_input"]["src_lengths"]
-                )
-                with torch.no_grad():
-                    t_encoder_out = model.encoder(
-                        sample["align_input"]["src_text"], sample["align_input"]["src_text_lengths"]
+
+                def _obtain_feature():
+                    s_encoder_out = model.encoder(
+                        sample["align_input"]["src_tokens"], sample["align_input"]["src_lengths"]
                     )
+                    with torch.no_grad():
+                        t_encoder_out = model.encoder(
+                            sample["align_input"]["src_text"], sample["align_input"]["src_text_lengths"]
+                        )
+                    return s_encoder_out, t_encoder_out
 
-                if layer == 'emb':
-                    s_x = s_encoder_out.encoder_embedding
-                    t_x = t_encoder_out.encoder_embedding
-                elif layer == 'last':
-                    s_x = s_encoder_out.encoder_out
-                    t_x = t_encoder_out.encoder_out
+                def _compute_loss(s_encoder_out, t_encoder_out):
+
+                    if layer == 'emb':
+                        s_x = s_encoder_out.encoder_embedding
+                        t_x = t_encoder_out.encoder_embedding
+                    elif layer == 'last':
+                        s_x = s_encoder_out.encoder_out
+                        t_x = t_encoder_out.encoder_out
+                    else:
+                        raise NotImplementedError
+                        
+                    s_padding_mask = s_encoder_out.encoder_padding_mask
+                    t_padding_mask = t_encoder_out.encoder_padding_mask
+
+                    s_len = padding_mask_to_lengths(s_padding_mask)
+                    t_len = padding_mask_to_lengths(t_padding_mask)
+
+                    bsz = s_x.size(1)
+
+                    loss = torch.tensor(0.)
+
+                    s_f = []
+                    t_f = []
+
+                    align = sample["align"]
+
+                    s_x = s_x.float()
+                    t_x = t_x.float()
+
+                    for i in range(bsz):
+                        segment, interval = align[i]
+                        
+                        for (t_l, t_r), (s_l, s_r) in zip(segment, interval):
+                            s_l = int((s_l * s_len[i]).floor())
+                            s_r = int((s_r * s_len[i]).ceil())
+
+                            if self.pooling == 'mean':
+                                t_feature = t_x[t_l : t_r + 1, i].mean(dim=0)
+                                s_feature = s_x[s_l : s_r + 1, i].mean(dim=0)
+                            elif self.pooling == 'max':
+                                t_feature = t_x[t_l : t_r + 1, i].max(dim=0)[0]
+                                s_feature = s_x[s_l : s_r + 1, i].max(dim=0)[0]
+                            elif self.pooling == 'sum':
+                                t_feature = t_x[t_l : t_r + 1, i].sum(dim=0)
+                                s_feature = s_x[s_l : s_r + 1, i].sum(dim=0)
+                            else:
+                                raise NotImplementedError
+
+                            s_f.append(s_feature)
+                            t_f.append(t_feature)
+
+                    s_f = torch.stack(s_f, dim=0)
+                    t_f = torch.stack(t_f, dim=0)
+
+                    logits = F.cosine_similarity(
+                        s_f.unsqueeze(1),
+                        t_f.unsqueeze(0),
+                        dim=-1
+                    ) / temp
+
+                    label = torch.arange(s_f.size(0)).to(logits.device)
+
+                    loss = F.cross_entropy(logits, label, reduction='sum')
+                    sample_size = s_f.size(0)
+
+                    return loss, sample_size
+
+                if self.enable_profiler:
+                    import time
+                    start_time = time.time()
+                    s_encoder_out, t_encoder_out = _obtain_feature()
+                    torch.cuda.synchronize()
+                    mid_time = time.time()
+                    loss, sample_size = _compute_loss(s_encoder_out, t_encoder_out)
+                    torch.cuda.synchronize()
+                    end_time = time.time()
+                    print('feature: {:.2f}ms, loss: {:.2f}ms, loss_ratio: {:.2f}'.format(
+                        (mid_time - start_time) * 1000, (end_time - mid_time) * 1000, (end_time - mid_time) / (end_time - start_time)))
                 else:
-                    raise NotImplementedError
-                    
-                s_padding_mask = s_encoder_out.encoder_padding_mask
-                t_padding_mask = t_encoder_out.encoder_padding_mask
-
-                s_len = padding_mask_to_lengths(s_padding_mask)
-                t_len = padding_mask_to_lengths(t_padding_mask)
-
-                bsz = s_x.size(1)
-
-                loss = torch.tensor(0.)
-
-                s_f = []
-                t_f = []
-
-                align = sample["align"]
-
-                s_x = s_x.float()
-                t_x = t_x.float()
-
-                for i in range(bsz):
-                    segment, interval = align[i]
-                    
-                    for (t_l, t_r), (s_l, s_r) in zip(segment, interval):
-                        s_l = int((s_l * s_len[i]).floor())
-                        s_r = int((s_r * s_len[i]).ceil())
-
-                        t_feature = t_x[t_l : t_r + 1, i].mean(dim=0)
-                        s_feature = s_x[s_l : s_r + 1, i].mean(dim=0)
-
-                        s_f.append(s_feature)
-                        t_f.append(t_feature)
-
-                s_f = torch.stack(s_f, dim=0)
-                t_f = torch.stack(t_f, dim=0)
-
-                logits = F.cosine_similarity(
-                    s_f.unsqueeze(1),
-                    t_f.unsqueeze(0),
-                    dim=-1
-                ) / temp
-
-                label = torch.arange(s_f.size(0)).to(logits.device)
-
-                loss = F.cross_entropy(logits, label, reduction='sum')
-                sample_size = s_f.size(0)
+                    s_encoder_out, t_encoder_out = _obtain_feature()
+                    loss, sample_size = _compute_loss(s_encoder_out, t_encoder_out)
 
             elif self.ablation_weight > 0:
 

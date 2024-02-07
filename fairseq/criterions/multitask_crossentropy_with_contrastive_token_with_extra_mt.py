@@ -27,12 +27,15 @@ class MultiTaskCrossEntropyWithContrastiveTokenWithExtraMT(LabelSmoothedCrossEnt
         contrastive_weight=[0., 0.],
         contrastive_temperature=[1.0, 1.0],
         contrastive_level='token',
+        pooling='mean',
         cross_attention_num=10,
         ablation_type=None,
         ablation_weight=0.,
+        enable_profiler=False,
     ):
         super().__init__(task, sentence_avg, label_smoothing, ignore_prefix_size, report_accuracy,
-                         contrastive_level, cross_attention_num, ablation_type, ablation_weight)
+                         contrastive_level, pooling, cross_attention_num, ablation_type, ablation_weight, 
+                         enable_profiler=enable_profiler)
         assert len(contrastive_weight) == len(contrastive_temperature)
         self.no_asr = no_asr
         self.contrastive_weight = contrastive_weight
@@ -47,7 +50,6 @@ class MultiTaskCrossEntropyWithContrastiveTokenWithExtraMT(LabelSmoothedCrossEnt
                             help='the weight of contrastive loss')
         parser.add_argument('--contrastive-temperature', default=[1.0, 1.0], type=float, nargs='+',
                             help='the temperature in the contrastive loss')
-
     def forward(self, model, sample, reduce=True):
         """Compute the loss for the given sample.
 
@@ -87,15 +89,15 @@ class MultiTaskCrossEntropyWithContrastiveTokenWithExtraMT(LabelSmoothedCrossEnt
                 if not self.no_asr:
                     label_smoothed_nll_loss_asr, nll_loss_asr = self.compute_loss_asr(model, sample, reduce=reduce)
                 label_smoothed_nll_loss_mt, nll_loss_mt = self.compute_loss_mt(model, sample, reduce=reduce)
+        if sample["dataset_type"] in ['st', 'asr']:
             if self.ablation_weight > 0:
                 contrastive_loss, contrastive_sample_size = self.compute_contrastive_loss(model, sample, 0, layer='emb', reduce=reduce)
             else:
                 if len(self.contrastive_weight) > 0 and self.contrastive_weight[0] > 0:
                     contrastive_loss, contrastive_sample_size = self.compute_contrastive_loss(model, sample, self.contrastive_temperature[0], layer='emb', reduce=reduce)
                 if len(self.contrastive_weight) > 1 and self.contrastive_weight[1] > 0:
-                    contrastive_semantic_loss, _ = self.compute_contrastive_loss(model, sample, self.contrastive_temperature[1], layer='last', reduce=reduce)
-
-        else:  # mt type compute CE_mt loss
+                    contrastive_semantic_loss, contrastive_sample_size = self.compute_contrastive_loss(model, sample, self.contrastive_temperature[1], layer='last', reduce=reduce)
+        if sample["dataset_type"] == 'mt':  # mt type compute CE_mt loss
             _net_output = model(**sample["net_input"])  # (x, extra)
             if model.training:
                 net_output, encoder_out = _net_output
@@ -118,17 +120,18 @@ class MultiTaskCrossEntropyWithContrastiveTokenWithExtraMT(LabelSmoothedCrossEnt
             sample_size = sample["target"].size(0) if self.sentence_avg else sample["ntokens"]
 
         nsentences = sample["source"].size(0)
+        loss = 0.
         if sample["dataset_type"] == "st":
-            multi_ce_loss = label_smoothed_nll_loss + label_smoothed_nll_loss_asr + label_smoothed_nll_loss_mt
+            loss = label_smoothed_nll_loss + label_smoothed_nll_loss_asr + label_smoothed_nll_loss_mt
+        if sample["dataset_type"] in ['st', 'asr']:
             if self.ablation_weight == 0:
-                loss = multi_ce_loss
                 if len(self.contrastive_weight) > 0 and self.contrastive_weight[0] > 0:
                     loss = loss + self.contrastive_weight[0] * contrastive_loss
                 if len(self.contrastive_weight) > 1 and self.contrastive_weight[1] > 0:
                     loss = loss + self.contrastive_weight[1] * contrastive_semantic_loss
             else:
-                loss = multi_ce_loss + self.ablation_weight * contrastive_loss
-        else:
+                loss = loss + self.ablation_weight * contrastive_loss
+        if sample["dataset_type"] == 'mt':
             loss = label_smoothed_nll_loss_mt
 
         logging_output = {
